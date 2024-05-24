@@ -1,10 +1,9 @@
 import { TextField } from '@mui/material'
-import { useState } from 'react'
 
-function App() {
+function Index() {
   return (
     <TextField></TextField>
   )
 }
 
-export default App
+export default Index
