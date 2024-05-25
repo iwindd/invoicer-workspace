@@ -95,11 +95,11 @@ export const navCEO = [
   {
     key: "admin",
     title: "แอดมิน",
-    href: "",
+    href: paths.admin,
     icon: "admin",
-    matcher: { type: "startsWith", href: "" },
+    matcher: { type: "startsWith", href: paths.admin },
   },
-  { key: "payment", title: "ช่องทางการชำระเงิน", href: "", icon: "payment" },
+  { key: "payment", title: "ช่องทางการชำระเงิน", href: paths.payment, icon: "payment" },
 ] satisfies NavItemConfig[];
 
 export const banks = [
