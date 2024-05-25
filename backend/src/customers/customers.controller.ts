@@ -1,6 +1,7 @@
-import { Body, Controller, HttpCode, Post, Request } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Post, Query, Request } from '@nestjs/common';
 import { CreateCustomerDto } from './customers.dto';
 import { CustomersService } from './customers.service';
+import { TableFetch } from 'src/libs/type';
 
 @Controller('customers')
 export class CustomersController {
@@ -10,5 +11,11 @@ export class CustomersController {
   @Post()
   create(@Request() req, @Body() payload: CreateCustomerDto) {
     return this.customersService.create(payload, req.user.id);
+  }
+
+  @HttpCode(200)
+  @Get()
+  findAll(@Query() query: TableFetch) {
+    return this.customersService.findAll(query);
   }
 }
