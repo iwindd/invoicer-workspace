@@ -1,5 +1,6 @@
-import * as React from 'react';
-import { ConfirmationDialog } from '../components/ui/confirmation';
+import * as React from "react";
+import { ConfirmationDialog } from "../components/ui/confirmation";
+import { useInterface } from "../providers/InterfaceProvider";
 
 interface ConfirmController<T> {
   handleOpen: () => void;
@@ -12,35 +13,40 @@ interface ConfirmController<T> {
   with: React.Dispatch<React.SetStateAction<any>>;
 
   props: {
-    title: string,
-    text: string,
-    cancel?: string,
-    confirm?: string,
+    title: string;
+    text: string;
+    cancel?: string;
+    confirm?: string;
     open: boolean;
     onClose: () => void;
-    onConfirm : (...args : any) => Promise<any>;
-    data: any
-  }
+    onConfirm: (...args: any) => Promise<any>;
+    data: any;
+  };
 }
 
 interface ConfirmDialogProps {
-  title: string,
-  text: string,
-  cancel?: string,
-  confirm?: string,
-  onConfirm: (...args : any) => Promise<any>
+  title: string;
+  text: string;
+  cancel?: string;
+  confirm?: string;
+  onConfirm: (...args: any) => Promise<any>;
 }
 
-export const Confirmation = ConfirmationDialog
+export const Confirmation = ConfirmationDialog;
 
-export function useConfirm<T = HTMLElement>(props: ConfirmDialogProps): ConfirmController<T> {
+export function useConfirm<T = HTMLElement>(
+  props: ConfirmDialogProps
+): ConfirmController<T> {
   const [open, setOpen] = React.useState<boolean>(false);
   const [title, setTitle] = React.useState<string>(props.title);
   const [text, setText] = React.useState<string>(props.text);
   const [cancel, setLCancel] = React.useState<string>(props.cancel || "ยกเลิก");
-  const [confirm, setLConfirm] = React.useState<string>(props.confirm || "ยืนยัน");
+  const [confirm, setLConfirm] = React.useState<string>(
+    props.confirm || "ยืนยัน"
+  );
   const [data, setData] = React.useState<any>([]);
-  const setData_ = (...args : any) => setData(args)
+  const setData_ = (...args: any) => setData(args);
+  const { isBackdrop } = useInterface();
 
   const handleOpen = React.useCallback(() => {
     setOpen(true);
@@ -55,8 +61,18 @@ export function useConfirm<T = HTMLElement>(props: ConfirmDialogProps): ConfirmC
     handleOpen,
     setTitle,
     setText,
-    setLCancel, setLConfirm,
+    setLCancel,
+    setLConfirm,
     with: setData_,
-    props: {title, text, cancel, confirm, open, onClose : handleClose, onConfirm: props.onConfirm, data}
+    props: {
+      title,
+      text,
+      cancel,
+      confirm,
+      open: open && !isBackdrop,
+      onClose: handleClose,
+      onConfirm: props.onConfirm,
+      data,
+    },
   };
 }

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import * as React from "react";
+import { useInterface } from "../providers/InterfaceProvider";
 
 interface DialogController<T> {
   handleOpen: () => void;
@@ -8,6 +9,7 @@ interface DialogController<T> {
 }
 
 export function useDialog<T = HTMLElement>(): DialogController<T> {
+  const { isBackdrop } = useInterface();
   const [open, setOpen] = React.useState<boolean>(false);
 
   const handleOpen = React.useCallback(() => {
@@ -22,5 +24,5 @@ export function useDialog<T = HTMLElement>(): DialogController<T> {
     setOpen((prevState) => !prevState);
   }, []);
 
-  return { handleClose, handleOpen, handleToggle, open };
+  return { handleClose, handleOpen, handleToggle, open: open && !isBackdrop };
 }
