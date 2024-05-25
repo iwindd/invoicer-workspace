@@ -7,7 +7,7 @@ import React, { useEffect } from 'react'
 import dayjs, { Dayjs } from "../../../../libs/dayjs";
 import { useInterface } from '../../../../providers/InterfaceProvider';
 import { Invoice } from '../../../../types/prisma';
-import EditableInput from '../EditableInput';
+import EditableInput from '../../../../components/EditableInput';
 
 export interface EditDialogProps {
   onClose: () => void;

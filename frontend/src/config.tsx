@@ -6,6 +6,7 @@ import HomePage from "./routes/home";
 import SignInPage from "./routes/signin";
 import CustomerPage from "./routes/customer";
 import InvoicePage from "./routes/invoice";
+import CustomerDetailPage from "./routes/customer/detail";
 
 export const routes = [
   {
@@ -15,6 +16,7 @@ export const routes = [
     children: [
       { index: true, element: <HomePage />, label: "หน้าแรก" },
       { path: "/customers", element: <CustomerPage />, label: "ลูกค้า" },
+      { path: "/customers/:customerId", element: <CustomerDetailPage/>, label: "รายละเอียดลูกค้า"},
       { path: "/invoices", element: <InvoicePage />, label: "บิล" },
     ]
   },
