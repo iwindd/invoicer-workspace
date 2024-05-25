@@ -14,6 +14,7 @@ interface AuthData {
   SignIn: (email: string, password: string) => Promise<boolean>;
   Logout: () => Promise<boolean>;
   userData: UserData | null;
+  isFetching: boolean;
 }
 
 const AuthContext = createContext<AuthData | undefined>(undefined);
@@ -29,12 +30,13 @@ export function useAuth() {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [userData, setUserData] = React.useState<UserData | null>(null);
   const [cookie, setCookie, removeCookie] = useCookies(["accessToken"]);
+  const [isFetching, setIsFetching] = React.useState<boolean>(true);
 
   const SignIn = async (email: string, password: string) => {
     try {
       const resp = await axios.post("/auth/login", { email, password });
       if ((resp.status = 200)) {
-        setCookie("accessToken", resp.data.access_token, { httpOnly: true });
+        setCookie("accessToken", resp.data.access_token);
       } else {
         throw Error(resp.statusText);
       }
@@ -57,17 +59,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
+    console.log(cookie.accessToken);
+    
     if (cookie.accessToken) {
+      setIsFetching(true);
+      console.log('start');
+      
       axios
         .get("/auth/user")
         .then((resp) => {
           setUserData(resp.data as UserData);
+          console.log('ok');
+          
         })
         .catch(() => {
           setUserData(null);
+          console.log('not found');
+          
+        })
+        .finally(() => {
+          setIsFetching(false);
+          console.log('set fetching to false');
+          
         });
     }
-  }, [cookie]);
+  }, []);
 
   return (
     <AuthContext.Provider
@@ -75,6 +91,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         SignIn,
         Logout,
         userData,
+        isFetching
       }}
     >
       {children}
