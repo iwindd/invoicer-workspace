@@ -5,7 +5,7 @@ export const url = "http://localhost:3000/api";
 
 const axios = axiosInstance.create({
   baseURL: url,
-  withCredentials: true,
+  withCredentials: false,
 });
 
 axios.interceptors.request.use(
