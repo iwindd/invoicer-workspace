@@ -1,11 +1,11 @@
 import { PrismaClient } from '@prisma/client'
-import bcrypt from 'bcrypt';
+import { hash } from 'bcrypt';
 const prisma = new PrismaClient()
 async function main() {
   const superadmin_data = {
     firstname: "Super Admin",
     lastname: "change me",
-    password: await bcrypt.hash("12341234", 16),
+    password: await hash("12341234", 16),
     email: "superadmin@gmail.com",
     permission: 1,
     isDeleted: false,
@@ -21,7 +21,7 @@ async function main() {
   const admin_data = {
     firstname: "Admin",
     lastname: "change me",
-    password: await bcrypt.hash("12341234", 16),
+    password: await hash("12341234", 16),
     email: "admin@gmail.com",
     permission: 0,
     isDeleted: false
