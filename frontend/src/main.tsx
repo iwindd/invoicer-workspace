@@ -8,13 +8,19 @@ import router from "./route";
 import ThemeRegistry from "./styles/ThemeRegistry";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import QueryProvider from "./providers/QueryProvider";
+import { InterfaceProvider } from "./providers/InterfaceProvider";
+import { AuthProvider } from "./providers/AuthProvider";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <ThemeRegistry>
         <QueryProvider>
-          <RouterProvider router={router} />
+          <InterfaceProvider>
+            <AuthProvider>
+              <RouterProvider router={router} />
+            </AuthProvider>
+          </InterfaceProvider>
         </QueryProvider>
       </ThemeRegistry>
     </LocalizationProvider>
