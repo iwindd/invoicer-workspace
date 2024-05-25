@@ -4,6 +4,7 @@ import { SnackbarProvider } from "notistack";
 
 interface BackdropInterface {
   setBackdrop: React.Dispatch<React.SetStateAction<boolean>>;
+  isBackdrop: boolean;
 }
 
 interface InterfaceData extends BackdropInterface {}
@@ -25,6 +26,7 @@ export function InterfaceProvider({ children }: { children: ReactNode }) {
     <InterfaceContext.Provider
       value={{
         setBackdrop: setBackdrop,
+        isBackdrop
       }}
     >
       <SnackbarProvider
