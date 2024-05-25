@@ -4,11 +4,13 @@ interface UserData {
   id: number;
   firstname: string;
   lastname: string;
+  email: string;
   permission: number;
 }
 
 interface AuthData {
   SignIn: (email: string, password: string) => Promise<boolean>;
+  Logout: () => Promise<boolean>;
   userData: UserData | null;
 }
 
@@ -33,6 +35,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           firstname: "invoicer",
           lastname: "invoicer_",
           permission: 0,
+          email: email
         };
 
         setUserData(resp);
@@ -46,14 +49,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const Logout = async () => {
+    try {
+      setUserData(null);
+
+      return true;
+    } catch (error) {
+      return false;
+    }
+  };
+
   useEffect(() => {
     console.log(userData);
-  }, [userData])
+  }, [userData]);
 
   return (
     <AuthContext.Provider
       value={{
         SignIn,
+        Logout,
         userData,
       }}
     >
