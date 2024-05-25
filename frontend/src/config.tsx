@@ -9,6 +9,7 @@ import InvoicePage from "./routes/invoice";
 import CustomerDetailPage from "./routes/customer/detail";
 import InvoiceDetailPage from "./routes/invoice/detail";
 import AdminPage from "./routes/admin";
+import AdminDetailPage from "./routes/admin/detail";
 
 export const routes = [
   {
@@ -22,6 +23,7 @@ export const routes = [
       { path: "/invoices", element: <InvoicePage />, label: "บิล" },
       { path: "/invoices/:invoiceId", element: <InvoiceDetailPage/>, label: "รายละเอียดบิล"},
       { path: "/admin", element: <AdminPage/>, label: "แอดมิน"},
+      { path: "/admin/:adminId", element: <AdminDetailPage/>, label: "รายละเอียดแอดมิน"},
     ]
   },
   { path: "/signin", element: <SignInPage />, label: "เข้าสู่ระบบ" },
