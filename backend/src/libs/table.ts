@@ -8,8 +8,10 @@ export const filter = (
 ) => {
   try {
     const text = filter?.quickFilterValues?.[0];
-    const items = filter?.items;
+    const items = filter?.items || [];
     const currentTime = dayjs();
+
+    if (!text && items.length <= 0) return null;
 
     return {
       OR: [
@@ -68,6 +70,8 @@ export const filter = (
       ],
     };
   } catch (error) {
+    console.error(error);
+    
     return null;
   }
 };
