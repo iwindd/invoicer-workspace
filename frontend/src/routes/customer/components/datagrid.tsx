@@ -4,13 +4,15 @@ import { GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 import { Delete, ViewAgenda } from "@mui/icons-material";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
-import { useNavigate } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import { useInterface } from "../../../providers/InterfaceProvider";
 import { paths } from "../../../config";
 import { Customers, Invoice } from "../../../types/prisma";
 import Datatable from "../../../components/ui/datatable";
 import GridLinkAction from "../../../components/GridLinkAction";
 import { Confirmation, useConfirm } from "../../../hooks/use-confirm";
+import { TableFetch } from "../../../types/table";
+import axios from "../../../libs/axios";
 
 const columns = (menu: {
   onDelete: (data: Customers) => any;
@@ -70,6 +72,12 @@ const columns = (menu: {
   ];
 };
 
+const getData = async (table: TableFetch) => {
+  return axios.get('/customers', {
+    params: table,
+  });
+}
+
 const Datagrid = () => {
   const navigate = useNavigate();
   const deleteConfirmation = useConfirm<HTMLElement>({
@@ -98,7 +106,7 @@ const Datagrid = () => {
       <Datatable
         columns={columns(Menu)}
         name={"customers"}
-        fetch={() => []}
+        fetch={getData}
         height={700}
         onDoubleClick={({ row: data }: { row: Customers }) =>
           navigate(`${paths.customers}/${data.id}`)
