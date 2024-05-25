@@ -26,9 +26,4 @@ export class AuthController {
   getProfile(@Request() req) {
     return req.user;
   }
-
-  @Post('logout')
-  async logout() {
-    return this.authService.logout();
-  }
 }
