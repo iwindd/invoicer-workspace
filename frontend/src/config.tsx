@@ -7,6 +7,7 @@ import SignInPage from "./routes/signin";
 import CustomerPage from "./routes/customer";
 import InvoicePage from "./routes/invoice";
 import CustomerDetailPage from "./routes/customer/detail";
+import InvoiceDetailPage from "./routes/invoice/detail";
 
 export const routes = [
   {
@@ -18,6 +19,7 @@ export const routes = [
       { path: "/customers", element: <CustomerPage />, label: "ลูกค้า" },
       { path: "/customers/:customerId", element: <CustomerDetailPage/>, label: "รายละเอียดลูกค้า"},
       { path: "/invoices", element: <InvoicePage />, label: "บิล" },
+      { path: "/invoices/:invoiceId", element: <InvoiceDetailPage/>, label: "รายละเอียดบิล"},
     ]
   },
   { path: "/signin", element: <SignInPage />, label: "เข้าสู่ระบบ" },
