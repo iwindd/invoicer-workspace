@@ -2,7 +2,8 @@ import React from "react";
 import { NavigateNextTwoTone } from "@mui/icons-material";
 import { Breadcrumbs, Link, Typography } from "@mui/material";
 import { useLocation } from "react-router-dom";
-import { routes } from "../../config";
+import { paths, routes } from "../../config";
+import { Link as RouterLink } from "react-router-dom"; 
 
 const findRoute = (pathSegments: string[]) => {
   return routes.find((route) => {
@@ -20,7 +21,7 @@ const Breadcrumb = () => {
 
   return (
     <Breadcrumbs separator={<NavigateNextTwoTone fontSize="small" />}>
-      <Link underline="hover" color="inherit" href="/admin/">
+      <Link underline="hover" color="inherit" component={RouterLink} to={`${paths.home}`}>
         {" "}
         Invoicer{" "}
       </Link>

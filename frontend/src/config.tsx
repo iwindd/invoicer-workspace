@@ -6,6 +6,8 @@ import { NavItemConfig } from "./types/nav";
 export const routes = [
   { path: "/", element: <HomePage />, label: "หน้าแรก" },
   { path: "/signin", element: <SignInPage />, label: "เข้าสู่ระบบ" },
+  { path: "/customers", element: <HomePage />, label: "ลูกค้า" },
+  { path: "/invoices", element: <HomePage />, label: "บิล" },
 ] ;
 
 export const paths = {
@@ -41,23 +43,22 @@ export const navItems = [
   {
     key: "overview",
     title: "ภาพรวม",
-    href: "",
-
+    href: paths.home,
     icon: "chart-pie",
   },
   {
     key: "customers",
     title: "ลูกค้า",
-    href: "",
+    href: paths.customers,
     icon: "user",
-    matcher: { type: "startsWith", href: "" },
+    matcher: { type: "startsWith", href: paths.customers },
   },
   {
     key: "invoices",
     title: "บิลทั้งหมด",
-    href: "",
+    href: paths.invoice,
     icon: "invoice",
-    matcher: { type: "startsWith", href: "" },
+    matcher: { type: "startsWith", href: paths.invoice },
   },
 ] satisfies NavItemConfig[];
 
