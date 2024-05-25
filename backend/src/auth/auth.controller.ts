@@ -16,8 +16,9 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Guest()
+  @HttpCode(200)
   @Post('login')
-  signIn(@Body() signInDto: Record<string, any>, @Res() res: Response) {
+  signIn(@Body() signInDto: Record<string, any>) {
     return this.authService.signIn(signInDto.email, signInDto.password);
   }
 
