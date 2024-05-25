@@ -1,4 +1,6 @@
 import React, { createContext, useContext, ReactNode, useEffect } from "react";
+import { useCookies } from "react-cookie";
+import axios from "../libs/axios";
 
 export interface UserData {
   id: number;
@@ -26,31 +28,26 @@ export function useAuth() {
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [userData, setUserData] = React.useState<UserData | null>(null);
+  const [cookie, setCookie, removeCookie] = useCookies(["accessToken"]);
 
   const SignIn = async (email: string, password: string) => {
     try {
-      if (email == "1234@gmail.com" && password == "12341234") {
-        const resp = {
-          id: 1,
-          firstname: "invoicer",
-          lastname: "invoicer_",
-          permission: 0,
-          email: email
-        };
-
-        setUserData(resp);
-
-        return true;
+      const resp = await axios.post("/auth/login", { email, password });
+      if ((resp.status = 200)) {
+        setCookie("accessToken", resp.data.access_token, { httpOnly: true });
+      } else {
+        throw Error(resp.statusText);
       }
-
-      throw Error("invalid_user");
     } catch (error) {
       return false;
     }
+
+    return true;
   };
 
   const Logout = async () => {
     try {
+      removeCookie("accessToken");
       setUserData(null);
 
       return true;
@@ -60,8 +57,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    console.log(userData);
-  }, [userData]);
+    if (cookie.accessToken) {
+      axios
+        .get("/auth/user")
+        .then((resp) => {
+          setUserData(resp.data as UserData);
+        })
+        .catch(() => {
+          setUserData(null);
+        });
+    }
+  }, [cookie]);
 
   return (
     <AuthContext.Provider
