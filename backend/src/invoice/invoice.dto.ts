@@ -1,17 +1,8 @@
-export class CreateCustomerDto {
-  readonly firstname: string;
-  readonly lastname: string;
-  readonly email: string;
-  readonly joinedAt: Date;
+export class CreateInvoiceDto {
+  readonly items: string;
+  readonly note: string;
+  readonly start: Date;
+  readonly end: Date;
+  readonly owner: number;
 }
 
-export class UpdateCustomerDto {
-  readonly firstname: string;
-  readonly lastname: string;
-  readonly email: string;
-  readonly joinedAt: Date;
-}
-
-export class PatchCustomerDto{
-  readonly lineToken: string
-}
