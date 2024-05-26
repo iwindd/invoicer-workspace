@@ -93,7 +93,12 @@ const EditDialog = ({ onClose, onOpen, open, invoice : i_}: EditDialogProps) => 
         onClose();
         revalidator.revalidate();
         await queryClient.refetchQueries({
-          queryKey: ["invoices"],
+          queryKey: ["invoices",],
+          type: "active",
+        });
+        
+        await queryClient.refetchQueries({
+          queryKey: ["invoicesall",],
           type: "active",
         });
         enqueueSnackbar("แก้ไขบิลสำเร็จแล้ว!", { variant: "success" });
