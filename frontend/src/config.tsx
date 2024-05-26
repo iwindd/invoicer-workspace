@@ -23,7 +23,7 @@ export const routes = [
       { path: "/customers/:customerId", element: <CustomerDetailPage/>, loader: CustomerDetailPage.Loader, label: "รายละเอียดลูกค้า"},
       { path: "/customers/:customerId/:invoiceId", element: <InvoiceDetailPage/>, loader: InvoiceDetailPage.Loader, label: "รายละเอียดลูกค้า"},
       { path: "/invoices", element: <InvoicePage />, label: "บิล" },
-      { path: "/invoices/:invoiceId", element: <InvoiceDetailPage/>, label: "รายละเอียดบิล"},
+      { path: "/invoices/:invoiceId", element: <InvoiceDetailPage/>, loader: InvoiceDetailPage.Loader, label: "รายละเอียดบิล"},
       { path: "/admin", element: <AdminPage/>, label: "แอดมิน"},
       { path: "/admin/:adminId", element: <AdminDetailPage/>, label: "รายละเอียดแอดมิน"},
       { path: "/payment", element: <PaymentPage/>, label: "ช่องทางการชำระเงิน"},
