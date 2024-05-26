@@ -97,8 +97,8 @@ const AddDialog = ({ onClose, onOpen, open }: AddDialogProps) => {
       const resp = await axios.post(`/invoice`, {
         items: JSON.stringify(items),
         note,
-        start,
-        end,
+        start: start.startOf("day"),
+        end: end.endOf("day"),
         ownerId: customerId,
       });
 
