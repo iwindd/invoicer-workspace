@@ -76,4 +76,38 @@ export class CustomersService {
       throw new BadRequestException(error);
     }
   }
+
+  async findOne(id : number){
+    try {
+      const data = await this.prisma.$transaction([
+        this.prisma.customers.findFirst({
+          where: { id: Number(id) },
+          select: {
+            id: true,
+            firstname: true,
+            lastname: true,
+            email: true,
+            lineToken: true
+          }
+        }),
+        this.prisma.invoice.findMany({
+          where: {
+            ownerId: id,
+          },
+          select: {
+            status: true,
+            start: true,
+            end: true,
+          },
+        })
+      ]);
+
+      return {
+        customer: data[0],
+        invoices: data[1]
+      }
+    } catch (error) {
+      throw new BadRequestException(error)
+    }
+  }
 }

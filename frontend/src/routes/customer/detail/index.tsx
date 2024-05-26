@@ -11,24 +11,23 @@ import { TotalSuccessInvoice } from "./components/stats/success";
 import { TotalProgressInvoice } from "./components/stats/progress";
 import { TotalFailInvoice } from "./components/stats/fail";
 import { analysis, customer } from "./type";
-import { Customers } from "../../../types/prisma";
-import { useParams } from "react-router-dom";
+import { useLoaderData, useParams } from "react-router-dom";
+import axios from "../../../libs/axios";
+import { AxiosResponse } from "axios";
 
 const Index = () => {
-  const { customerId } = useParams();
-  const customer: customer = {};
-  const analysis: analysis = {};
-
-  const data = {} as Customers;
+  const resp = useLoaderData() as AxiosResponse;
+  const customer: customer = resp.data.customer;
+  const analysis: analysis = resp.data.invoices;
 
   const stats = {
-    success: [].filter((i: any) => i.status == 1),
-    cancel: [].filter((i: any) => i.status == -1),
-    pending: [].filter(
+    success: analysis.filter((i: any) => i.status == 1),
+    cancel: analysis.filter((i: any) => i.status == -1),
+    pending: analysis.filter(
       (i: any) =>
         i.status == 0 && dayjs().isBetween(dayjs(i.start), dayjs(i.end))
     ),
-    fail: [].filter(
+    fail: analysis.filter(
       (i: any) => i.status == 0 && dayjs().isAfter(dayjs(i.end))
     ),
   };
@@ -39,7 +38,7 @@ const Index = () => {
         <Stack direction="row" spacing={3} alignItems={"center"}>
           <Stack spacing={1} sx={{ flex: "1 1 auto" }}>
             <Typography variant="h4">
-              {data?.firstname} {data?.lastname}{" "}
+              {customer?.firstname} {customer?.lastname}{" "}
             </Typography>
           </Stack>
           <>
@@ -50,28 +49,28 @@ const Index = () => {
       </Grid>
       <Grid lg={3} sm={6} xs={12}>
         <TotalInvoice
-          id={Number(customerId)}
+          id={Number(customer.id)}
           sx={{ height: "100%" }}
           value={`${formatter.number([].length)} รายการ`}
         />
       </Grid>
       <Grid lg={3} sm={6} xs={12}>
         <TotalSuccessInvoice
-          id={Number(customerId)}
+          id={Number(customer.id)}
           sx={{ height: "100%" }}
           value={`${formatter.number(stats.success.length)} รายการ`}
         />
       </Grid>
       <Grid lg={3} sm={6} xs={12}>
         <TotalProgressInvoice
-          id={Number(customerId)}
+          id={Number(customer.id)}
           sx={{ height: "100%" }}
           value={`${formatter.number(stats.pending.length)} รายการ`}
         />
       </Grid>
       <Grid lg={3} sm={6} xs={12}>
         <TotalFailInvoice
-          id={Number(customerId)}
+          id={Number(customer.id)}
           sx={{ height: "100%" }}
           value={`${formatter.number(stats.fail.length)} รายการ`}
         />
@@ -80,10 +79,14 @@ const Index = () => {
         <Datatable />
       </Grid>
       <Grid lg={12} md={12} xs={12}>
-        <EditProfile customer={data as Customers} />
+        <EditProfile customer={customer} />
       </Grid>
     </Grid>
   );
+};
+
+Index.Loader = ({ params }: { params: { customerId: string } }) => {
+  return axios.get(`/customers/${params.customerId}`);
 };
 
 export default Index;
