@@ -110,6 +110,12 @@ const AddDialog = ({ onClose, onOpen, open }: AddDialogProps) => {
           type: "active",
         });
         enqueueSnackbar("เพิ่มบิลสำเร็จแล้ว!", { variant: "success" });
+
+        setNote("");
+        setStart(null);
+        setEnd(null);
+        setError("");
+        setItems([]);
       } else {
         throw Error(resp.statusText);
       }
