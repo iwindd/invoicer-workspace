@@ -10,6 +10,10 @@ import dayjs, { Dayjs } from '../../../../libs/dayjs';
 import { DatePicker } from '@mui/x-date-pickers';
 import { Confirmation, useConfirm } from '../../../../hooks/use-confirm';
 import { Customers } from '../../../../types/prisma';
+import { useInterface } from '../../../../providers/InterfaceProvider'
+import { useSnackbar } from 'notistack'
+import axios from '../../../../libs/axios'
+import { useRevalidator } from 'react-router-dom'
 
 interface EditProfileProps {
   customer: Customers
@@ -18,12 +22,37 @@ interface EditProfileProps {
 const EditProfile = ({ customer }: EditProfileProps) => {
   const [isEdit, setIsEdit] = React.useState<boolean>(false);
   const [joined, setJoined] = React.useState<Dayjs | null>(dayjs(customer.joinedAt));
+  const {setBackdrop} = useInterface();
+  const {enqueueSnackbar} = useSnackbar();
+  let revalidator = useRevalidator();
 
   const confirmation = useConfirm({
     title: "แจ้งเตือน",
     text: `คุณต้องการจะแก้ไข ${customer.firstname} ${customer.lastname} หรือไม่?`,
     onConfirm: async (data: Inputs) => {
-
+      try {
+        setBackdrop(true);
+        const resp = await axios.put(`/customers/${customer.id}`, {
+          ...data,
+          joinedAt: joined?.toDate(),
+        });
+  
+        if (resp.status == 200) {
+          setIsEdit(false);
+          revalidator.revalidate();
+          enqueueSnackbar("แก้ไขลูกค้าสำเร็จ!", {
+            variant: "success",
+          });
+        }else{
+          throw Error(resp.statusText)
+        }
+      } catch (error) {
+        enqueueSnackbar("มีบางอย่างผิดพลาดกรุณาลองใหม่อีกครั้งภายหลัง!", {
+          variant: "error",
+        });
+      } finally {
+        setBackdrop(false);
+      }
     }
   })
 

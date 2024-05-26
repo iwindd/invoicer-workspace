@@ -115,6 +115,22 @@ export class CustomersService {
     }
   }
 
+  async update(id: number, payload: CreateCustomerDto){
+    try {
+      await this.prisma.customers.update({
+        where: {id},
+        data: {
+          firstname: payload.firstname,
+          lastname: payload.lastname,
+          email: payload.email,
+          joinedAt: payload.joinedAt,
+        }
+      })
+    } catch (error) {
+      throw new BadRequestException(error)
+    }
+  }
+
   async remove(id: number) {
     try {
       await this.prisma.customers.update({
