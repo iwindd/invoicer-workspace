@@ -73,18 +73,40 @@ const columns = (menu: {
 };
 
 const getData = async (table: TableFetch) => {
-  return axios.get('/customers', {
+  return axios.get("/customers", {
     params: table,
   });
-}
+};
 
 const Datagrid = () => {
   const navigate = useNavigate();
+  const { setBackdrop } = useInterface();
+  const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
   const deleteConfirmation = useConfirm<HTMLElement>({
     title: "แจ้งเตือน",
     text: "",
     onConfirm: async (id: number) => {
+      try {
+        setBackdrop(true);
+        const resp = await axios.delete(`/customers/${id}`);
 
+        if (resp.status == 200) {
+          enqueueSnackbar("ลบลูกค้าสำเร็จ!", {
+            variant: "success",
+          });
+
+          await queryClient.refetchQueries({ queryKey: ['customers'], type: 'active' })
+        } else {
+          throw Error(resp.statusText);
+        }
+      } catch (error) {
+        enqueueSnackbar("มีบางอย่างผิดพลาดกรุณาลองใหม่อีกครั้งภายหลัง!", {
+          variant: "error",
+        });
+      } finally {
+        setBackdrop(false);
+      }
     },
   });
 

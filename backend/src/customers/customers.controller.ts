@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Param, Post, Query, Request } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Query, Request } from '@nestjs/common';
 import { CreateCustomerDto } from './customers.dto';
 import { CustomersService } from './customers.service';
 import { TableFetch } from 'src/libs/type';
@@ -22,5 +22,10 @@ export class CustomersController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.customersService.findOne(+id);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.customersService.remove(+id);
   }
 }

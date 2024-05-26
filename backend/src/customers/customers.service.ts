@@ -3,7 +3,7 @@ import { PrismaService } from 'src/prisma.service';
 import { CreateCustomerDto } from './customers.dto';
 import { TableFetch } from 'src/libs/type';
 import dayjs = require('dayjs');
-import { filter, order, pagination} from 'src/libs/table';
+import { filter, order, pagination } from 'src/libs/table';
 
 @Injectable()
 export class CustomersService {
@@ -18,26 +18,30 @@ export class CustomersService {
         },
       });
 
-      return {message: "success"}
+      return { message: 'success' };
     } catch (error) {
       throw new BadRequestException(error);
     }
   }
 
-  async findAll(table: TableFetch){
+  async findAll(table: TableFetch) {
     try {
-      const filters = filter(table.filter, ['firstname', 'lastname', 'email'], (text) => [
-        { createdBy: { ...filter(table.filter, ['firstname', 'lastname']) }, },
-      ])
-  
+      const filters = filter(
+        table.filter,
+        ['firstname', 'lastname', 'email'],
+        text => [
+          { createdBy: { ...filter(table.filter, ['firstname', 'lastname']) } },
+        ],
+      );
+
       const currentTime = dayjs();
       const data = await this.prisma.$transaction([
         this.prisma.customers.findMany({
           where: {
             isDeleted: false,
-            ...(filters)
+            ...filters,
           },
-  
+
           ...pagination(table.pagination),
           orderBy: order(table.sort),
           select: {
@@ -46,12 +50,12 @@ export class CustomersService {
             id: true,
             email: true,
             joinedAt: true,
-  
+
             createdBy: {
               select: {
                 firstname: true,
-                lastname: true
-              }
+                lastname: true,
+              },
             },
             Invoice: {
               where: {
@@ -60,24 +64,24 @@ export class CustomersService {
                 end: { gte: currentTime.toDate() },
               },
               select: {
-                id: true
-              }
-            }
-          }
+                id: true,
+              },
+            },
+          },
         }),
         this.prisma.customers.count({ where: { isDeleted: false } }),
-      ])
-  
+      ]);
+
       return {
         data: data[0],
-        total: data[1]
-      }
+        total: data[1],
+      };
     } catch (error) {
       throw new BadRequestException(error);
     }
   }
 
-  async findOne(id : number){
+  async findOne(id: number) {
     try {
       const data = await this.prisma.$transaction([
         this.prisma.customers.findFirst({
@@ -87,8 +91,8 @@ export class CustomersService {
             firstname: true,
             lastname: true,
             email: true,
-            lineToken: true
-          }
+            lineToken: true,
+          },
         }),
         this.prisma.invoice.findMany({
           where: {
@@ -99,15 +103,28 @@ export class CustomersService {
             start: true,
             end: true,
           },
-        })
+        }),
       ]);
 
       return {
         customer: data[0],
-        invoices: data[1]
-      }
+        invoices: data[1],
+      };
     } catch (error) {
-      throw new BadRequestException(error)
+      throw new BadRequestException(error);
+    }
+  }
+
+  async remove(id: number) {
+    try {
+      await this.prisma.customers.update({
+        where: { id },
+        data: { isDeleted: true },
+      });
+
+      return true
+    } catch (error) {
+      throw new BadRequestException(error);
     }
   }
 }
