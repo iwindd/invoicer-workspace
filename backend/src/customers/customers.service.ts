@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { CreateCustomerDto } from './customers.dto';
+import { CreateCustomerDto, PatchCustomerDto } from './customers.dto';
 import { TableFetch } from 'src/libs/type';
 import dayjs = require('dayjs');
 import { filter, order, pagination } from 'src/libs/table';
@@ -126,6 +126,19 @@ export class CustomersService {
           joinedAt: payload.joinedAt,
         }
       })
+    } catch (error) {
+      throw new BadRequestException(error)
+    }
+  }
+
+  async patch(id: number, payload: PatchCustomerDto){
+    try {
+      await this.prisma.customers.update({
+        where: { id },
+        data: { lineToken: payload.lineToken }
+      })
+
+      return true
     } catch (error) {
       throw new BadRequestException(error)
     }

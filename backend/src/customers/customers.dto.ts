@@ -4,3 +4,7 @@ export class CreateCustomerDto {
   readonly email: string;
   readonly joinedAt: Date;
 }
+
+export class PatchCustomerDto{
+  readonly lineToken: string
+}
