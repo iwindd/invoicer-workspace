@@ -21,6 +21,7 @@ export const routes = [
       { index: true, element: <HomePage />, label: "หน้าแรก" },
       { path: "/customers", element: <CustomerPage />, label: "ลูกค้า" },
       { path: "/customers/:customerId", element: <CustomerDetailPage/>, loader: CustomerDetailPage.Loader, label: "รายละเอียดลูกค้า"},
+      { path: "/customers/:customerId/:invoiceId", element: <InvoiceDetailPage/>, loader: InvoiceDetailPage.Loader, label: "รายละเอียดลูกค้า"},
       { path: "/invoices", element: <InvoicePage />, label: "บิล" },
       { path: "/invoices/:invoiceId", element: <InvoiceDetailPage/>, label: "รายละเอียดบิล"},
       { path: "/admin", element: <AdminPage/>, label: "แอดมิน"},

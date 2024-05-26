@@ -1,11 +1,11 @@
 import { Stack, Typography } from "@mui/material";
 import InvoicePaper, { InvoicePaperProps } from "./components/invoice";
 import { InvoicePrint } from "./components/invoice";
-import { useParams } from "react-router-dom";
+import { useLoaderData, useParams } from "react-router-dom";
+import axios from "../../../libs/axios";
 
 const Index = () => {
-  const { invoiceId } = useParams();
-  const invoice = {};
+  const invoice = useLoaderData();
 
   return (
     <Stack spacing={3}>
@@ -23,5 +23,9 @@ const Index = () => {
     </Stack>
   );
 };
+
+Index.Loader = async ({params}: {params: {invoiceId: string}}) => {
+  return (await axios.get(`/invoice/${params.invoiceId}`)).data
+}
 
 export default Index;

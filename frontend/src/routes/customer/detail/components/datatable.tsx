@@ -91,7 +91,7 @@ const colomns = (actions: {
     getActions: ({ row }: { row: Invoice }) => [
       <GridLinkAction
         key="print"
-        to={`${paths.customers}/${row.ownerId}/invoice/${row.id}`}
+        to={`${paths.customers}/${row.ownerId}/${row.id}`}
         icon={<PrintTwoTone />}
         label="พิมพ์"
         showInMenu

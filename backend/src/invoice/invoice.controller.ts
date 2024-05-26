@@ -19,6 +19,11 @@ export class InvoiceController {
     return this.invoiceService.findAll(query);
   }
 
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.invoiceService.findOne(+id);
+  }
+
   @Put(":id")
   update(@Param('id') id: String, @Body() payload: UpdateInvoiceDto){
     return this.invoiceService.update(+id, payload);

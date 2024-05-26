@@ -65,6 +65,28 @@ export class InvoiceService {
     }
   }
 
+  async findOne(id: number){
+    try {
+      return await this.prisma.invoice.findFirst({
+        where: {id},
+        select: {
+          id: true,
+          items: true,
+          owner: {
+            select: {
+              firstname: true,
+              lastname: true,
+            },
+          },
+        },
+      })
+    } catch (error) {
+      console.log(error);
+      
+      throw new BadRequestException(error)
+    }
+  }
+
   async update(id: number, payload: UpdateInvoiceDto){
     try {
       await this.prisma.invoice.update({
