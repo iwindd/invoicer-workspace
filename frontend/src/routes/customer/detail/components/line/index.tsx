@@ -35,7 +35,6 @@ const LineDialog = ({ onClose, onOpen, open, customer }: LineDialogProps) => {
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log(customer.id);
     
     try {
       setBackdrop(true);

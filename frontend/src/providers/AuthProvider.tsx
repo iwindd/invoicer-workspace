@@ -59,28 +59,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    console.log(cookie.accessToken);
-    
     if (cookie.accessToken) {
       setIsFetching(true);
-      console.log('start');
       
       axios
         .get("/auth/user")
         .then((resp) => {
           setUserData(resp.data as UserData);
-          console.log('ok');
-          
         })
         .catch(() => {
           setUserData(null);
-          console.log('not found');
-          
         })
         .finally(() => {
           setIsFetching(false);
-          console.log('set fetching to false');
-          
         });
     }
   }, []);
