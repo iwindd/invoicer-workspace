@@ -26,6 +26,11 @@ import dayjs, { Dayjs } from "../../../../../libs/dayjs";
 import { InvoiceItem } from "../../type";
 import EditableInput from "../../../../../components/EditableInput";
 import { useDialog } from "../../../../../hooks/use-dialog";
+import { useInterface } from "../../../../../providers/InterfaceProvider";
+import { useSnackbar } from "notistack";
+import axios from "../../../../../libs/axios";
+import { useParams, useRevalidator } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 
 export interface AddDialogProps {
   onClose: () => void;
@@ -45,6 +50,11 @@ const AddDialog = ({ onClose, onOpen, open }: AddDialogProps) => {
   const [start, setStart] = React.useState<Dayjs | null>(dayjs());
   const [end, setEnd] = React.useState<Dayjs | null>(dayjs());
   const [error, setError] = React.useState<string>("");
+  const { setBackdrop } = useInterface();
+  const { enqueueSnackbar } = useSnackbar();
+  const { customerId } = useParams();
+  const queryClient = useQueryClient();
+  let revalidator = useRevalidator();
 
   const onAddItem = () => {
     setItems((prev) => {
@@ -81,6 +91,33 @@ const AddDialog = ({ onClose, onOpen, open }: AddDialogProps) => {
     });
 
     if (error != "") return;
+
+    try {
+      setBackdrop(true);
+      const resp = await axios.post(`/invoice`, {
+        items,
+        note,
+        start,
+        end,
+        ownerId: customerId,
+      });
+
+      if (resp.status == 200) {
+        onClose();
+        revalidator.revalidate();
+        await queryClient.refetchQueries({
+          queryKey: ["invoices"],
+          type: "active",
+        });
+        enqueueSnackbar("เพิ่มบิลสำเร็จแล้ว!", { variant: "success" });
+      } else {
+        throw Error(resp.statusText);
+      }
+    } catch (error) {
+      setError("เกิดข้อผิดพลาดกรุณาลองใหม่อีกครั้งภายหลัง");
+    } finally {
+      setBackdrop(false);
+    }
   };
 
   return (
