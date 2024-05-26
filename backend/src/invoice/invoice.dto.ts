@@ -12,3 +12,7 @@ export class UpdateInvoiceDto {
   readonly start: Date;
   readonly end: Date;
 }
+
+export class PatchInvoiceDto{
+  readonly status: string;
+}

@@ -22,6 +22,9 @@ import Datagrid from "../../../../components/ui/datatable";
 import { condition } from "../../../../libs/utils";
 import { TableFetch } from "../../../../types/table";
 import axios from "../../../../libs/axios";
+import { useInterface } from "../../../../providers/InterfaceProvider";
+import { useSnackbar } from "notistack";
+import { useQueryClient } from "@tanstack/react-query";
 
 const colomns = (actions: {
   edit: (row: InvoiceView) => any;
@@ -143,22 +146,101 @@ const Datatable = () => {
   const viewDialog = useDialog<HTMLElement>();
   const editDialog = useDialog<HTMLElement>();
   const [invoice, setInvoice] = React.useState<InvoiceView | null>(null);
+  const { setBackdrop } = useInterface();
+  const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
+
   const cancelConfirm = useConfirm<HTMLElement>({
     title: "แจ้งเตือน",
     text: "คุณต้องการที่จะยกเลิกบิลนี้หรือไม่?",
-    onConfirm: async (id: string) => {},
+    onConfirm: async (id: string) => {
+      try {
+        setBackdrop(true);
+        const resp = await axios.patch(`/invoice/${id}`, {
+          status: -1
+        });
+  
+        if (resp.status == 200) {
+          await queryClient.refetchQueries({
+            queryKey: ["invoices"],
+            type: "active",
+          });
+          enqueueSnackbar("ยกเลิกบิลสำเร็จ!", {
+            variant: "success",
+          });
+        }else{
+          throw Error(resp.statusText)
+        }
+      } catch (error) {
+        enqueueSnackbar("มีบางอย่างผิดพลาดกรุณาลองใหม่อีกครั้งภายหลัง!", {
+          variant: "error",
+        });
+      } finally {
+        setBackdrop(false);
+      }
+    },
   });
 
   const paymentConfirm = useConfirm<HTMLElement>({
     title: "แจ้งเตือน",
     text: "คุณต้องการที่จากตั้งสถานะเป็นชำระแล้วหรือไม่?",
-    onConfirm: async (id: string) => {},
+    onConfirm: async (id: string) => {
+      try {
+        setBackdrop(true);
+        const resp = await axios.patch(`/invoice/${id}`, {
+          status: 1
+        });
+  
+        if (resp.status == 200) {
+          await queryClient.refetchQueries({
+            queryKey: ["invoices"],
+            type: "active",
+          });
+          enqueueSnackbar("เปลี่ยนสถานะเป็นชำระเงินสำเร็จ!", {
+            variant: "success",
+          });
+        }else{
+          throw Error(resp.statusText)
+        }
+      } catch (error) {
+        enqueueSnackbar("มีบางอย่างผิดพลาดกรุณาลองใหม่อีกครั้งภายหลัง!", {
+          variant: "error",
+        });
+      } finally {
+        setBackdrop(false);
+      }
+    },
   });
 
   const denypaymentConfirm = useConfirm<HTMLElement>({
     title: "แจ้งเตือน",
-    text: "คุณต้องการที่จากตั้งสถานะเป็นชำระแล้วหรือไม่?",
-    onConfirm: async (id: string) => {},
+    text: "คุณต้องการยกเลิกสถานะการชำระเงินหรือไม่?",
+    onConfirm: async (id: string) => {
+      try {
+        setBackdrop(true);
+        const resp = await axios.patch(`/invoice/${id}`, {
+          status: 0
+        });
+  
+        if (resp.status == 200) {
+          await queryClient.refetchQueries({
+            queryKey: ["invoices"],
+            type: "active",
+          });
+          enqueueSnackbar("ยกเลิกสถานะชำระเงินสำเร็จ!", {
+            variant: "success",
+          });
+        }else{
+          throw Error(resp.statusText)
+        }
+      } catch (error) {
+        enqueueSnackbar("มีบางอย่างผิดพลาดกรุณาลองใหม่อีกครั้งภายหลัง!", {
+          variant: "error",
+        });
+      } finally {
+        setBackdrop(false);
+      }
+    },
   });
 
   const onView = ({ row }: { row: InvoiceView }) => {

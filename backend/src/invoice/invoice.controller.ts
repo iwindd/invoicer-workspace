@@ -1,5 +1,5 @@
-import { Body, Controller, Get, HttpCode, Param, Post, Put, Query, Request } from '@nestjs/common';
-import { CreateInvoiceDto, UpdateInvoiceDto } from './invoice.dto';
+import { Body, Controller, Get, HttpCode, Param, Patch, Post, Put, Query, Request } from '@nestjs/common';
+import { CreateInvoiceDto, PatchInvoiceDto, UpdateInvoiceDto } from './invoice.dto';
 import { InvoiceService } from './invoice.service';
 import { TableFetch } from 'src/libs/type';
 
@@ -22,5 +22,10 @@ export class InvoiceController {
   @Put(":id")
   update(@Param('id') id: String, @Body() payload: UpdateInvoiceDto){
     return this.invoiceService.update(+id, payload);
+  }
+
+  @Patch(":id")
+  patch(@Param("id") id: String, @Body() payload: PatchInvoiceDto){
+    return this.invoiceService.patch(+id, payload)
   }
 }
