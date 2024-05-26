@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { CreateInvoiceDto } from './invoice.dto';
+import { CreateInvoiceDto, UpdateInvoiceDto } from './invoice.dto';
 import { TableFetch } from 'src/libs/type';
 import { filter, order, pagination } from 'src/libs/table';
 
@@ -62,6 +62,19 @@ export class InvoiceService {
       };
     } catch (error) {
       throw new BadRequestException(error);
+    }
+  }
+
+  async update(id: number, payload: UpdateInvoiceDto){
+    try {
+      await this.prisma.invoice.update({
+        where: {id},
+        data: {
+          ...payload,
+        }
+      })
+    } catch (error) {
+      throw new BadRequestException(error)
     }
   }
 }

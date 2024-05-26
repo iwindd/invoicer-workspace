@@ -1,5 +1,5 @@
-import { Body, Controller, Get, HttpCode, Post, Query, Request } from '@nestjs/common';
-import { CreateInvoiceDto } from './invoice.dto';
+import { Body, Controller, Get, HttpCode, Param, Post, Put, Query, Request } from '@nestjs/common';
+import { CreateInvoiceDto, UpdateInvoiceDto } from './invoice.dto';
 import { InvoiceService } from './invoice.service';
 import { TableFetch } from 'src/libs/type';
 
@@ -17,5 +17,10 @@ export class InvoiceController {
   @Get()
   findAll(@Query() query: TableFetch) {
     return this.invoiceService.findAll(query);
+  }
+
+  @Put(":id")
+  update(@Param('id') id: String, @Body() payload: UpdateInvoiceDto){
+    return this.invoiceService.update(+id, payload);
   }
 }

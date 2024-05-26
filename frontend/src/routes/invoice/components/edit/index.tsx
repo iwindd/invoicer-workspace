@@ -8,6 +8,10 @@ import dayjs, { Dayjs } from "../../../../libs/dayjs";
 import { useInterface } from '../../../../providers/InterfaceProvider';
 import { Invoice } from '../../../../types/prisma';
 import EditableInput from '../../../../components/EditableInput';
+import axios from '../../../../libs/axios';
+import { useSnackbar } from 'notistack';
+import { useParams, useRevalidator } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 
 export interface EditDialogProps {
   onClose: () => void;
@@ -30,7 +34,11 @@ const EditDialog = ({ onClose, onOpen, open, invoice : i_}: EditDialogProps) => 
   const [end, setEnd] = React.useState<Dayjs | null>(dayjs());
   const [error, setError] = React.useState<string>("");
   const { setBackdrop } = useInterface();
-
+  const { enqueueSnackbar } = useSnackbar();
+  const { customerId } = useParams();
+  const queryClient = useQueryClient();
+  let revalidator = useRevalidator();
+  
   useEffect(() => {
     setInvoice(i_)
     if (i_ != null) {
@@ -73,7 +81,31 @@ const EditDialog = ({ onClose, onOpen, open, invoice : i_}: EditDialogProps) => 
 
       if (error != "") return
 
+      setBackdrop(true);
+      const resp = await axios.put(`/invoice/${i_.id}`, {
+        items: JSON.stringify(items),
+        note,
+        start,
+        end,
+      });
 
+      if (resp.status == 200) {
+        onClose();
+        revalidator.revalidate();
+        await queryClient.refetchQueries({
+          queryKey: ["invoices"],
+          type: "active",
+        });
+        enqueueSnackbar("แก้ไขบิลสำเร็จแล้ว!", { variant: "success" });
+
+        setNote("");
+        setStart(null);
+        setEnd(null);
+        setError("");
+        setItems([]);
+      } else {
+        throw Error(resp.statusText);
+      }
     } catch (error) {
       setError("เกิดข้อผิดพลาดกรุณาลองใหม่อีกครั้งภายหลัง");
     } finally{
