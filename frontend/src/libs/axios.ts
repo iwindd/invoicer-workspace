@@ -1,7 +1,7 @@
 import axiosInstance from "axios";
 import cookie from "cookie";
 
-export const url = "http://localhost:3000/api";
+export const url = import.meta.env.VITE_BACKEND_BASE_URL;
 
 const axios = axiosInstance.create({
   baseURL: url,
