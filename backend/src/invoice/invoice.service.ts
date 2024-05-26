@@ -1,6 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { CreateInvoiceDto } from './invoice.dto';
+import { TableFetch } from 'src/libs/type';
+import { filter, order, pagination } from 'src/libs/table';
 
 @Injectable()
 export class InvoiceService {
@@ -18,8 +20,48 @@ export class InvoiceService {
       })
     } catch (error) {
       console.log(error);
-      
+
       throw new BadRequestException(error)
+    }
+  }
+
+  async findAll(table: TableFetch) {
+    try {
+      const data = await this.prisma.$transaction([
+        this.prisma.invoice.findMany({
+          where: {
+            ownerId: +table.target,
+            ...filter(table.filter, ['note']),
+          },
+          ...(pagination(table.pagination)),
+          orderBy: order(table.sort),
+          select: {
+            id: true,
+            status: true,
+            note: true,
+            items: true,
+            start: true,
+            end: true,
+            createdAt: true,
+            image: true,
+            ownerId: true,
+            createdBy: {
+              select: {
+                firstname: true,
+                lastname: true,
+              },
+            },
+          },
+        }),
+        this.prisma.invoice.count({ where: { ownerId: +table.target } }),
+      ]);
+
+      return {
+        data: data[0],
+        total: data[1],
+      };
+    } catch (error) {
+      throw new BadRequestException(error);
     }
   }
 }

@@ -20,6 +20,8 @@ import ViewDialog from "../../../invoice/components/view";
 import EditDialog from "../../../invoice/components/edit";
 import Datagrid from "../../../../components/ui/datatable";
 import { condition } from "../../../../libs/utils";
+import { TableFetch } from "../../../../types/table";
+import axios from "../../../../libs/axios";
 
 const colomns = (actions: {
   edit: (row: InvoiceView) => any;
@@ -130,6 +132,12 @@ const colomns = (actions: {
   },
 ];
 
+const getData = async (table: TableFetch, customerId: number) => {
+  return axios.get("/invoice", {
+    params: {...table, target: customerId},
+  });
+};
+
 const Datatable = () => {
   const { customerId } = useParams();
   const viewDialog = useDialog<HTMLElement>();
@@ -193,7 +201,7 @@ const Datatable = () => {
     <>
       <Datagrid
         columns={colomns(actions)}
-        fetch={() => []}
+        fetch={getData}
         name={"invoices"}
         height={580}
         bridge={[Number(customerId)]}

@@ -29,5 +29,6 @@ export interface Filter{
 export interface TableFetch{
   sort: SortItem[],
   pagination: Pagination,
-  filter: Filter
+  filter: Filter,
+  target?: string
 }
