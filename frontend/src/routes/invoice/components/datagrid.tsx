@@ -12,6 +12,8 @@ import GridLinkAction from '../../../components/GridLinkAction';
 import { useDialog } from '../../../hooks/use-dialog';
 import { Confirmation, useConfirm } from '../../../hooks/use-confirm';
 import Datatable from '../../../components/ui/datatable';
+import { TableFetch } from '../../../types/table';
+import axios from '../../../libs/axios';
 
 const columns = (actions: {
   edit: (row: Invoice) => any,
@@ -51,6 +53,12 @@ const columns = (actions: {
     }
   ]
 }
+
+const getData = async (table: TableFetch) => {
+  return axios.get("/invoice", {
+    params: table,
+  });
+};
 
 const Datagrid = () => {
   const viewDialog = useDialog<HTMLElement>();
@@ -97,7 +105,7 @@ const Datagrid = () => {
       <Datatable
         columns={columns(actions)}
         name={'invoicesall'}
-        fetch={() => []}
+        fetch={getData}
         height={700}
         getCellClassName={(params) => params.field == 'status' ? `text-color-${condition(formatter.invoice(params.row), { [-1]: "secondary", 0: "info", 1: "success", 2: "primary", 3: "warning", 4: "error" }, 'normal') as string}` : ""}
         onDoubleClick={onView}
