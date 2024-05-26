@@ -3,6 +3,6 @@ export class CreateInvoiceDto {
   readonly note: string;
   readonly start: Date;
   readonly end: Date;
-  readonly owner: number;
+  readonly ownerId: number;
 }
 
