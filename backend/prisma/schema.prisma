@@ -51,7 +51,6 @@ model Customers {
 
 model Invoice {
   id   Int    @id @default(autoincrement())
-  code String
 
   note  String
   items Json
