@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Put, Query, Request } from '@nestjs/common';
-import { CreateCustomerDto, PatchCustomerDto } from './customers.dto';
+import { CreateCustomerDto, PatchCustomerDto, UpdateCustomerDto } from './customers.dto';
 import { CustomersService } from './customers.service';
 import { TableFetch } from 'src/libs/type';
 
@@ -25,7 +25,7 @@ export class CustomersController {
   }
 
   @Put(":id")
-  update(@Param('id') id: String, @Body() payload: CreateCustomerDto){
+  update(@Param('id') id: String, @Body() payload: UpdateCustomerDto){
     return this.customersService.update(+id, payload);
   }
 
