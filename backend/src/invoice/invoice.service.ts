@@ -30,10 +30,10 @@ export class InvoiceService {
       const data = await this.prisma.$transaction([
         this.prisma.invoice.findMany({
           where: {
-            ownerId: +table.target,
+            ...(table.target ? { ownerId: +table.target } : {}),
             ...filter(table.filter, ['note']),
           },
-          ...(pagination(table.pagination)),
+          ...pagination(table.pagination),
           orderBy: order(table.sort),
           select: {
             id: true,
@@ -51,9 +51,17 @@ export class InvoiceService {
                 lastname: true,
               },
             },
+            owner: {
+              select: {
+                firstname: true,
+                lastname: true,
+              },
+            },
           },
         }),
-        this.prisma.invoice.count({ where: { ownerId: +table.target } }),
+        this.prisma.invoice.count({
+          ...(table.target ? { where: { ownerId: +table.target } } : {}),
+        }),
       ]);
 
       return {
@@ -82,7 +90,7 @@ export class InvoiceService {
       })
     } catch (error) {
       console.log(error);
-      
+
       throw new BadRequestException(error)
     }
   }
