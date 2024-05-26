@@ -25,7 +25,7 @@ export class CustomersController {
   }
 
   @Put(":id")
-  update(@Param(':id') id: String, @Body() payload: CreateCustomerDto){
+  update(@Param('id') id: String, @Body() payload: CreateCustomerDto){
     return this.customersService.update(+id, payload);
   }
 
