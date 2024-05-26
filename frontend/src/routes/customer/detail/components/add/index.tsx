@@ -95,7 +95,7 @@ const AddDialog = ({ onClose, onOpen, open }: AddDialogProps) => {
     try {
       setBackdrop(true);
       const resp = await axios.post(`/invoice`, {
-        items,
+        items: JSON.stringify(items),
         note,
         start,
         end,
