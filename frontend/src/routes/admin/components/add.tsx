@@ -6,6 +6,10 @@ import { useForm } from 'react-hook-form';
 import { AddTwoTone } from '@mui/icons-material';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import { useDialog } from '../../../hooks/use-dialog';
+import { useInterface } from '../../../providers/InterfaceProvider';
+import { useSnackbar } from 'notistack';
+import axios from '../../../libs/axios';
+import { useQueryClient } from '@tanstack/react-query';
 
 export interface AddDialogProps {
   onClose: () => void;
@@ -15,6 +19,9 @@ export interface AddDialogProps {
 function AddDialog({ onClose, open }: AddDialogProps): React.JSX.Element {
   const [isLoading, setLoading] = React.useState<boolean>(false);
   const [checked, setChecked] = React.useState(true);
+  const { setBackdrop } = useInterface();
+  const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
 
   const {
     register,
@@ -26,7 +33,33 @@ function AddDialog({ onClose, open }: AddDialogProps): React.JSX.Element {
   });
 
   const onSubmit = async (payload: Inputs) => {
+    try {
+      setBackdrop(true);
+      const resp = await axios.post("/users", {
+        ...payload,
+        confirmPassword: undefined,
+        permission: checked ? 1: 0
+      });
 
+      if (resp.status == 200) {
+        onClose();
+        await queryClient.refetchQueries({
+          queryKey: ["admins"],
+          type: "active",
+        });
+        enqueueSnackbar("เพิ่มแอดมินสำเร็จ!", {
+          variant: "success",
+        });
+      }else{
+        throw Error(resp.statusText)
+      }
+    } catch (error) {
+      enqueueSnackbar("มีบางอย่างผิดพลาดกรุณาลองใหม่อีกครั้งภายหลัง!", {
+        variant: "error",
+      });
+    } finally {
+      setBackdrop(false);
+    }
   }
 
   const handleClose = (_: any, reason: any) => {
