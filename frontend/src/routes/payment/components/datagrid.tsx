@@ -11,6 +11,8 @@ import { useInterface } from '../../../providers/InterfaceProvider';
 import { useDialog } from '../../../hooks/use-dialog';
 import { Confirmation, useConfirm } from '../../../hooks/use-confirm';
 import Datatable from '../../../components/ui/datatable';
+import axios from '../../../libs/axios';
+import { TableFetch } from '../../../types/table';
 
 const columns = (menu: {
   onEdit: (data: Payment) => any;
@@ -19,8 +21,7 @@ const columns = (menu: {
 }): GridColDef[] => {
   return [
     { field: 'active', headerName: 'สถานะ', flex: 1, valueGetter: (value: boolean) => value ? "กำลังใช้งาน" : "ไม่ถูกใช้งาน" },
-    { field: 'bankId', headerName: 'ธนาคาร', flex: 1, valueGetter: (value: string) => banks.find(b => b.id == value)?.thai_name || "-"},
-    { field: 'firstname_thai', headerName: 'ชื่อบัญชี', flex: 1, valueGetter: (value, row) => formatter.text(value + " " + row.lastname_thai) },
+    { field: 'title', headerName: 'ชื่อบัญชี', flex: 1, valueGetter: (value, row) => formatter.text(value) },
     { field: 'account', headerName: 'หมายเลขบัญชี', flex: 1, valueGetter: (value) => value },
     { field: 'createdAt', headerName: 'วันที่เพิ่ม', flex: 1, valueGetter: (value: Date) => formatter.date(value) },
     {
@@ -42,6 +43,12 @@ const columns = (menu: {
     }
   ]
 }
+
+const getData = async (table: TableFetch) => {
+  return axios.get("/payment", {
+    params: table,
+  });
+};
 
 const Datagrid = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -80,7 +87,7 @@ const Datagrid = () => {
       <Datatable
         columns={columns(Menu)}
         name={'payments'}
-        fetch={() => []}
+        fetch={getData}
         height={700}
         getCellClassName={(params) => params.field == 'active' ? `text-color-${params.row.active ? "primary" : "secondary"}` : ""}
       />
