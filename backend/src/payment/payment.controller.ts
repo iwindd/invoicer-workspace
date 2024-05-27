@@ -1,6 +1,6 @@
-import { Body, Controller, Get, HttpCode, Post, Query, Request } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Param, Patch, Post, Query, Request } from '@nestjs/common';
 import { PaymentService } from './payment.service';
-import { CreatePaymentDto } from './payment.dto';
+import { CreatePaymentDto, PatchPaymentDto } from './payment.dto';
 import { TableFetch } from 'src/libs/type';
 
 @Controller('payment')
@@ -19,4 +19,8 @@ export class PaymentController {
     return this.paymentService.findAll(query);
   }
 
+  @Patch(":id")
+  patch(@Param("id") id: String, @Body() payload: PatchPaymentDto){
+    return this.paymentService.patch(+id, payload)
+  }
 }

@@ -54,6 +54,8 @@ const Datagrid = () => {
   const { enqueueSnackbar } = useSnackbar();
   const editDialog = useDialog<HTMLDivElement>();
   const [payment, setPayment] = React.useState<Payment | null>(null);
+  const { setBackdrop } = useInterface();
+  const queryClient = useQueryClient();
 
   const confirmation = useConfirm<HTMLElement>({
     title: "แจ้งเตือน",
@@ -78,7 +80,27 @@ const Datagrid = () => {
       confirmation.handleOpen();
     }, [confirmation, enqueueSnackbar]),
     onActive: React.useCallback((data: Payment) => async () => {
-
+      try {
+        setBackdrop(true);
+        const resp = await axios.patch(`/payment/${data.id}`, {
+          active: true
+        });
+  
+        if (resp.status == 200) {
+          await queryClient.refetchQueries({ queryKey: ['payments'], type: 'active' })
+          enqueueSnackbar("เปิดใช้งานบัญชีนี้สำเร็จ!", {
+            variant: "success",
+          });
+        }else{
+          throw Error(resp.statusText)
+        }
+      } catch (error) {
+        enqueueSnackbar("มีบางอย่างผิดพลาดกรุณาลองใหม่อีกครั้งภายหลัง!", {
+          variant: "error",
+        });
+      } finally {
+        setBackdrop(false);
+      }
     }, []),
   }
 
