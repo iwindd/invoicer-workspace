@@ -61,7 +61,25 @@ const Datagrid = () => {
     title: "แจ้งเตือน",
     text: "",
     onConfirm: async (id: number) => {
-
+      try {
+        setBackdrop(true);
+        const resp = await axios.delete(`/payment/${id}`);
+  
+        if (resp.status == 200) {
+          await queryClient.refetchQueries({ queryKey: ['payments'], type: 'active' })
+          enqueueSnackbar("ลบวิธีการชำระเงินสำเร็จ!", {
+            variant: "success",
+          });
+        }else{
+          throw Error(resp.statusText)
+        }
+      } catch (error) {
+        enqueueSnackbar("มีบางอย่างผิดพลาดกรุณาลองใหม่อีกครั้งภายหลัง!", {
+          variant: "error",
+        });
+      } finally {
+        setBackdrop(false);
+      }
     }
   })
 

@@ -86,5 +86,15 @@ export class PaymentService {
     }
   }
 
+  async remove(id : number){
+    try {
+      await this.prisma.payment.update({ 
+        where: { id, active: false }, 
+        data: { isDeleted: true } 
+      })
+    } catch (error) {
+      throw new BadRequestException(error)
+    }
+  }
 
 }
