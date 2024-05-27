@@ -21,6 +21,7 @@ import { useDialog } from "../../../hooks/use-dialog";
 import { useInterface } from "../../../providers/InterfaceProvider";
 import { useSnackbar } from "notistack";
 import axios from "../../../libs/axios";
+import { useQueryClient } from "@tanstack/react-query";
 
 export interface AddDialogProps {
   onClose: () => void;
@@ -36,6 +37,7 @@ function AddDialog({
   const [checked, setChecked] = React.useState(true);
   const { setBackdrop } = useInterface();
   const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
 
   const {
     register,
@@ -59,6 +61,7 @@ function AddDialog({
 
       if (resp.status == 200) {
         onClose();
+        await queryClient.refetchQueries({ queryKey: ['payments'], type: 'active' })
         enqueueSnackbar("เพิ่มวิธีการชำระเงินสำเร็จ!", {
           variant: "success",
         });
