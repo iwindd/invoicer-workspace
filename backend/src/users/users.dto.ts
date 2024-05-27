@@ -6,3 +6,6 @@ export class CreateUserDto {
   readonly permission: string;
 }
 
+export class PatchUserDto{
+  readonly password: string;
+}

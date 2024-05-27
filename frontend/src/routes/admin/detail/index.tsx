@@ -12,6 +12,7 @@ const Index = () => {
   const resp = useLoaderData() as AxiosResponse;
   const data = {
     user: {
+      id: resp?.data.id,
       firstname: resp?.data.firstname,
       lastname: resp?.data.lastname,
       email: resp?.data.email,

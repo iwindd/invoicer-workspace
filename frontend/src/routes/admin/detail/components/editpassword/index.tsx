@@ -1,10 +1,14 @@
-import { EditTwoTone } from '@mui/icons-material';
+import { EditTwoTone, Password } from '@mui/icons-material';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import { useForm } from 'react-hook-form';
 import { Inputs, Schema } from '../schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useDialog } from '../../../../../hooks/use-dialog';
+import { useQueryClient } from '@tanstack/react-query';
+import { useSnackbar } from 'notistack';
+import { useInterface } from '../../../../../providers/InterfaceProvider';
+import axios from '../../../../../libs/axios';
 
 export interface EditPasswordDialog {
   onClose: () => void;
@@ -14,6 +18,8 @@ export interface EditPasswordDialog {
 }
 
 const EditPasswordDialog = ({ onClose, onOpen, open, id }: EditPasswordDialog) => {
+  const { setBackdrop } = useInterface();
+  const { enqueueSnackbar } = useSnackbar();
   const {
     register,
     handleSubmit,
@@ -29,7 +35,27 @@ const EditPasswordDialog = ({ onClose, onOpen, open, id }: EditPasswordDialog) =
   }
 
   const onSubmit = async (payload : Inputs) => {
+    try {
+      setBackdrop(true);
+      const resp = await axios.patch(`/users/${id}`, {
+        password: payload.password
+      });
 
+      if (resp.status == 200) {
+        onClose();
+        enqueueSnackbar("แก้ไขรหัสผ่านสำเร็จ!", {
+          variant: "success",
+        });
+      }else{
+        throw Error(resp.statusText)
+      }
+    } catch (error) {
+      enqueueSnackbar("มีบางอย่างผิดพลาดกรุณาลองใหม่อีกครั้งภายหลัง!", {
+        variant: "error",
+      });
+    } finally {
+      setBackdrop(false);
+    }
   }
 
   return (

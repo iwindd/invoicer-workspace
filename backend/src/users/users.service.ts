@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
-import { CreateUserDto } from './users.dto';
+import { CreateUserDto, PatchUserDto } from './users.dto';
 import { hash } from 'bcrypt';
 import { TableFetch } from 'src/libs/type';
 import { filter, order, pagination } from 'src/libs/table';
@@ -108,6 +108,21 @@ export class UsersService {
         }
       })
     } catch (error) {
+      throw new BadRequestException(error)
+    }
+  }
+
+  async patch(id: number, payload: PatchUserDto){
+    try {
+      await this.prisma.user.update({
+        where: {id},
+        data: {
+          password: await hash(payload.password, 16)
+        }
+      })
+    } catch (error) {
+      console.log(error);
+      
       throw new BadRequestException(error)
     }
   }
