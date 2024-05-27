@@ -1,6 +1,7 @@
-import { Body, Controller, HttpCode, Post, Request } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Post, Query, Request } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './users.dto';
+import { TableFetch } from 'src/libs/type';
 
 @Controller('users')
 export class UsersController {
@@ -13,4 +14,9 @@ export class UsersController {
     return this.usersService.create(payload)
   }
 
+  @HttpCode(200)
+  @Get()
+  findAll(@Query() query: TableFetch) {
+    return this.usersService.findAll(query);
+  }
 }

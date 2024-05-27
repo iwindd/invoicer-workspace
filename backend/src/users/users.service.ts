@@ -3,6 +3,8 @@ import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
 import { CreateUserDto } from './users.dto';
 import { hash } from 'bcrypt';
+import { TableFetch } from 'src/libs/type';
+import { filter, order, pagination } from 'src/libs/table';
 
 @Injectable()
 export class UsersService {
@@ -35,5 +37,39 @@ export class UsersService {
         permission: true,
       },
     }) as unknown) as User | undefined;
+  }
+
+    
+  async findAll(table: TableFetch) {
+    try {
+      const data = await this.prisma.$transaction([
+        this.prisma.user.findMany({
+          where: {
+            isDeleted: false,
+            ...(filter(table.filter, ['firstname', 'lastname']))
+          },
+          ...(pagination(table.pagination)),
+          orderBy: order(table.sort),
+          select: {
+            id: true,
+            createdAt: true,
+            firstname: true,
+            lastname: true,
+            email: true,
+            permission: true,
+            Customers: { select: { id: true } },
+            Invoice: { select: { id: true } },
+          }
+        }),
+        this.prisma.user.count({ where: { isDeleted: false } }),
+      ])
+
+      return {
+        data: data[0],
+        total: data[1],
+      };
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 }

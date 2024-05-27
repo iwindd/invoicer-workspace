@@ -9,6 +9,8 @@ import GridLinkAction from '../../../components/GridLinkAction';
 import { Confirmation, useConfirm } from '../../../hooks/use-confirm';
 import Datatable from '../../../components/ui/datatable';
 import { useNavigate } from 'react-router-dom';
+import axios from '../../../libs/axios';
+import { TableFetch } from '../../../types/table';
 
 const columns = (menu: {
   onDelete: (data: User) => any;
@@ -35,6 +37,12 @@ const columns = (menu: {
   ]
 }
 
+const getData = async (table: TableFetch) => {
+  return axios.get("/users", {
+    params: table,
+  });
+};
+
 const Datagrid = () => {
   const { userData } = useAuth();
   const navigate = useNavigate();
@@ -60,7 +68,7 @@ const Datagrid = () => {
       <Datatable
         columns={columns(Menu, userData)}
         name={'admins'}
-        fetch={() => []}
+        fetch={getData}
         height={700}
         onDoubleClick={
           ({ row: data }: { row: User }) => navigate(`${paths.admin}/${data.id}`)
