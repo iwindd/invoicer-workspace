@@ -72,4 +72,15 @@ export class UsersService {
       throw new BadRequestException(error);
     }
   }
+
+  async remove(id: number){
+    try {
+      await this.prisma.user.update({
+        where: { id: id, canRemove: true },
+        data: { isDeleted: true }
+      })
+    } catch (error) {
+      throw new BadRequestException(error)
+    }
+  }
 }

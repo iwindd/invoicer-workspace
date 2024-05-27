@@ -11,6 +11,9 @@ import Datatable from '../../../components/ui/datatable';
 import { useNavigate } from 'react-router-dom';
 import axios from '../../../libs/axios';
 import { TableFetch } from '../../../types/table';
+import { useInterface } from '../../../providers/InterfaceProvider';
+import { useSnackbar } from 'notistack';
+import { useQueryClient } from '@tanstack/react-query';
 
 const columns = (menu: {
   onDelete: (data: User) => any;
@@ -46,12 +49,36 @@ const getData = async (table: TableFetch) => {
 const Datagrid = () => {
   const { userData } = useAuth();
   const navigate = useNavigate();
+  const { setBackdrop } = useInterface();
+  const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
 
   const deleteConfirmation = useConfirm<HTMLElement>({
     title: "แจ้งเตือน",
     text: "",
     onConfirm: async (id: number) => {
-
+      try {
+        setBackdrop(true);
+        const resp = await axios.delete(`/users/${id}`);
+  
+        if (resp.status == 200) {
+          await queryClient.refetchQueries({
+            queryKey: ["admins"],
+            type: "active",
+          });
+          enqueueSnackbar("ลบแอดมินสำเร็จ!", {
+            variant: "success",
+          });
+        }else{
+          throw Error(resp.statusText)
+        }
+      } catch (error) {
+        enqueueSnackbar("มีบางอย่างผิดพลาดกรุณาลองใหม่อีกครั้งภายหลัง!", {
+          variant: "error",
+        });
+      } finally {
+        setBackdrop(false);
+      }
     }
   })
 
