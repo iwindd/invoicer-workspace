@@ -3,20 +3,22 @@ import { Stack, Typography } from "@mui/material";
 import EditProfile from "./components/editprofile";
 import { TableAdminInvoice } from "./table/TableInvoice";
 import { TableAdminCustomers } from "./table/TableCustomers";
-import { useParams } from "react-router-dom";
+import { useLoaderData, useParams } from "react-router-dom";
 import { Customers, Invoice } from "../../../types/prisma";
+import axios from "../../../libs/axios";
+import { AxiosResponse } from "axios";
 
 const Index = () => {
-  const { adminId } = useParams();
+  const resp = useLoaderData() as AxiosResponse;
   const data = {
-    User: {
-      firstname: "mock",
-      lastname: "up",
-      email: "email",
-      permission: 0,
+    user: {
+      firstname: resp?.data.firstname,
+      lastname: resp?.data.lastname,
+      email: resp?.data.email,
+      permission: resp?.data.permission,
     },
-    Customers: [],
-    Invoice: [],
+    Customers: resp?.data.Customers,
+    Invoice: resp?.data.Invoice,
   };
 
   return (
@@ -25,7 +27,7 @@ const Index = () => {
         <Stack direction="row" spacing={3} alignItems={"center"}>
           <Stack spacing={1} sx={{ flex: "1 1 auto" }}>
             <Typography variant="h4">
-              {data.User.firstname} {data.User.lastname}{" "}
+              {data.user.firstname} {data.user.lastname}{" "}
             </Typography>
           </Stack>
         </Stack>
@@ -45,10 +47,14 @@ const Index = () => {
         />
       </Grid>
       <Grid lg={12} md={12} xs={12}>
-        <EditProfile user={data as any} />
+        <EditProfile user={data.user as any} />
       </Grid>
     </Grid>
   );
-};
+};  
+
+Index.Loader = async ({params} : {params: {adminId: string}}) => {
+  return await axios.get(`/users/${params.adminId}`)
+}
 
 export default Index;

@@ -25,7 +25,7 @@ export const routes = [
       { path: "/invoices", element: <InvoicePage />, label: "บิล" },
       { path: "/invoices/:invoiceId", element: <InvoiceDetailPage/>, loader: InvoiceDetailPage.Loader, label: "รายละเอียดบิล"},
       { path: "/admin", element: <AdminPage/>, label: "แอดมิน"},
-      { path: "/admin/:adminId", element: <AdminDetailPage/>, label: "รายละเอียดแอดมิน"},
+      { path: "/admin/:adminId", element: <AdminDetailPage/>, loader: AdminDetailPage.Loader, label: "รายละเอียดแอดมิน"},
       { path: "/payment", element: <PaymentPage/>, label: "ช่องทางการชำระเงิน"},
     ]
   },

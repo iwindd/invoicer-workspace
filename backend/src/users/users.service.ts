@@ -73,6 +73,45 @@ export class UsersService {
     }
   }
 
+  async fineOne(id: number){
+    try {
+      return await this.prisma.user.findFirst({
+        where: { id: id },
+        select: {
+          firstname: true,
+          lastname: true,
+          email: true,
+          id: true,
+          permission: true,
+  
+          Customers: {
+            select: {
+              id: true,
+              firstname: true,
+              lastname: true,
+              createdAt: true
+            },
+            where: {
+              isDeleted: false
+            }
+          },
+          Invoice: {
+            select: {
+              id: true,
+              status: true,
+              start: true,
+              end: true,
+              note: true,
+              createdAt: true
+            }
+          }
+        }
+      })
+    } catch (error) {
+      throw new BadRequestException(error)
+    }
+  }
+
   async remove(id: number){
     try {
       await this.prisma.user.update({

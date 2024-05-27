@@ -20,6 +20,11 @@ export class UsersController {
     return this.usersService.findAll(query);
   }
 
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.usersService.fineOne(+id);
+  }
+
   @Delete(':id')
   remove(@Request() req, @Param('id') id: string) {
     if (req.user.id == +id) {
