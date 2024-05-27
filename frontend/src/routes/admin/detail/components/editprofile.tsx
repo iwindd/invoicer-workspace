@@ -9,6 +9,11 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import EditPasswordController from './editpassword';
 import { Confirmation, useConfirm } from '../../../../hooks/use-confirm';
 import { User } from '../../../../types/prisma';
+import { useInterface } from '../../../../providers/InterfaceProvider';
+import { useSnackbar } from 'notistack';
+import axios from '../../../../libs/axios';
+import { useRevalidator } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface EditProfileProps {
   user: User
@@ -18,12 +23,37 @@ const EditProfile = ({ user }: EditProfileProps) => {
   const [isEdit, setIsEdit] = React.useState<boolean>(false);
 
   const [checked, setChecked] = React.useState(user.permission == 1);
+  const { setBackdrop } = useInterface();
+  const { enqueueSnackbar } = useSnackbar();
+  const revalidator = useRevalidator();
 
   const confirmation = useConfirm({
     title: "แจ้งเตือน",
     text: `คุณต้องการจะแก้ไข ${user.firstname} ${user.lastname} หรือไม่?`,
     onConfirm: async (data: Inputs) => {
-
+      try {
+        setBackdrop(true);
+        const resp = await axios.put(`/users/${user.id}`, {
+          ...data,
+          permission: checked ? 1 : 0
+        });
+  
+        if (resp.status == 200) {
+          setIsEdit(false)
+          revalidator.revalidate();
+          enqueueSnackbar("แก้ไขแอดมินสำเร็จ!", {
+            variant: "success",
+          });
+        }else{
+          throw Error(resp.statusText)
+        }
+      } catch (error) {
+        enqueueSnackbar("มีบางอย่างผิดพลาดกรุณาลองใหม่อีกครั้งภายหลัง!", {
+          variant: "error",
+        });
+      } finally {
+        setBackdrop(false);
+      }
     }
   })
 

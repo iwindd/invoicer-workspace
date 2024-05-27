@@ -1,6 +1,6 @@
-import { BadRequestException, Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Query, Request } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Put, Query, Request } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto, PatchUserDto } from './users.dto';
+import { CreateUserDto, PatchUserDto, UpdateUserDto } from './users.dto';
 import { TableFetch } from 'src/libs/type';
 
 @Controller('users')
@@ -23,6 +23,11 @@ export class UsersController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.usersService.fineOne(+id);
+  }
+
+  @Put(":id")
+  update(@Param('id') id: String, @Body() payload: UpdateUserDto){
+    return this.usersService.update(+id, payload);
   }
 
   @Patch(":id")
