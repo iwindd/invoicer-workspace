@@ -19,7 +19,7 @@ model User {
 
   isDeleted  Boolean @default(false)
   permission Int     @default(0)
-  canRemove Boolean @default(true)
+  canRemove  Boolean @default(true)
 
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
@@ -40,7 +40,7 @@ model Customers {
 
   isDeleted Boolean @default(false)
 
-  joinedAt DateTime @default(now())
+  joinedAt  DateTime @default(now())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -50,7 +50,7 @@ model Customers {
 }
 
 model Invoice {
-  id   Int    @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
   note  String
   items Json
@@ -84,16 +84,12 @@ model Activity {
 
 model Payment {
   id        Int     @id @default(autoincrement())
+  title     String
+  name      String
+  account   String
   active    Boolean
   isDeleted Boolean @default(false)
-  bankId String
-  account String
-  idcard String
-  phone String
-  firstname_thai String
-  lastname_thai String
-  firstname_eng String
-  lastname_eng String
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
