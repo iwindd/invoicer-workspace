@@ -6,10 +6,10 @@ import { paths, routes } from "../../config";
 import { Link as RouterLink } from "react-router-dom"; 
 
 const findRoute = (pathSegments: string[]) => {
-  return routes.find((route) => {
-    const routeSegments = route.path.split("/").filter((segment) => segment);
+  return (routes[0] as any).children.find((route : any) => {
+    const routeSegments = route.path.split("/").filter((segment : any) => segment);
     if (routeSegments.length !== pathSegments.length) return false;
-    return routeSegments.every((segment, index) => {
+    return routeSegments.every((segment : any, index : any) => {
       return segment.startsWith(":") || segment === pathSegments[index];
     });
   });
@@ -31,7 +31,6 @@ const Breadcrumb = () => {
         const path = `/${pathSegments.join("/")}`;
         const route = findRoute(pathSegments);
 
-        if (path == "/admin") return null;
         if (!route) return null;
 
         const isActive = pathNames.length === pathSegments.length;

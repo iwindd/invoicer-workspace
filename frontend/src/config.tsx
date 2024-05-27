@@ -12,18 +12,19 @@ import AdminPage from "./routes/admin";
 import AdminDetailPage from "./routes/admin/detail";
 import PaymentPage from "./routes/payment";
 
+
 export const routes = [
   {
     path: "/",
     element: <Root />,
     label: "หน้าแรก",
     children: [
-      { index: true, element: <HomePage />, loader: HomePage.Loader, label: "หน้าแรก" },
+      { path: "/", index: true, element: <HomePage />, loader: HomePage.Loader, label: "หน้าแรก" },
       { path: "/customers", element: <CustomerPage />, label: "ลูกค้า" },
       { path: "/customers/:customerId", element: <CustomerDetailPage/>, loader: CustomerDetailPage.Loader, label: "รายละเอียดลูกค้า"},
-      { path: "/customers/:customerId/:invoiceId", element: <InvoiceDetailPage/>, loader: InvoiceDetailPage.Loader, label: "รายละเอียดลูกค้า"},
-      { path: "/invoices", element: <InvoicePage />, label: "บิล" },
-      { path: "/invoices/:invoiceId", element: <InvoiceDetailPage/>, loader: InvoiceDetailPage.Loader, label: "รายละเอียดบิล"},
+      { path: "/customers/:customerId/:invoiceId", element: <InvoiceDetailPage/>, loader: InvoiceDetailPage.Loader, label: "ใบแจ้งหนี้"},
+      { path: "/invoices", element: <InvoicePage />, label: "บิลทั้งหมด" },
+      { path: "/invoices/:invoiceId", element: <InvoiceDetailPage/>, loader: InvoiceDetailPage.Loader, label: "ใบแจ้งหนี้"},
       { path: "/admin", element: <AdminPage/>, label: "แอดมิน"},
       { path: "/admin/:adminId", element: <AdminDetailPage/>, loader: AdminDetailPage.Loader, label: "รายละเอียดแอดมิน"},
       { path: "/payment", element: <PaymentPage/>, label: "ช่องทางการชำระเงิน"},
@@ -44,15 +45,10 @@ export const paths = {
 } as const;
 
 export const breadcrumbData = [
-  { name: "home", path: "/", label: "หน้าแรก" },
-  { name: "signin", path: "/auth/singin", label: "เข้าสู่ระบบ" },
-  { name: "dashboard", path: "/", label: "แดชบอร์ด" },
+  { name: "home", path: "/", label: "แดชบอร์ด" },
+  { name: "signin", path: "/singin", label: "เข้าสู่ระบบ" },
   { name: "customer", path: "/customers", label: "ลูกค้า" },
-  {
-    name: "customer.detail",
-    path: "/customers/:id",
-    label: "รายละเอียดลูกค้า",
-  },
+  { name: "customer.detail", path: "/customers/:id", label: "รายละเอียดลูกค้า" },
   {
     name: "customer.detail.invoice.detail",
     path: "/customers/:id/invoice/:iid",
