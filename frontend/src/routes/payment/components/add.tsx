@@ -18,6 +18,9 @@ import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import { Inputs, Schema } from "../schema";
 import { banks } from "../../../config";
 import { useDialog } from "../../../hooks/use-dialog";
+import { useInterface } from "../../../providers/InterfaceProvider";
+import { useSnackbar } from "notistack";
+import axios from "../../../libs/axios";
 
 export interface AddDialogProps {
   onClose: () => void;
@@ -31,6 +34,8 @@ function AddDialog({
   open,
 }: AddDialogProps): React.JSX.Element {
   const [checked, setChecked] = React.useState(true);
+  const { setBackdrop } = useInterface();
+  const { enqueueSnackbar } = useSnackbar();
 
   const {
     register,
@@ -43,8 +48,30 @@ function AddDialog({
   });
 
   const onSubmit = async (payload: Inputs) => {
-    onClose();
+    console.log(payload);
+    
+    try {
+      setBackdrop(true);
+      const resp = await axios.post("/payment", {
+        ...payload,
+        active: checked,
+      });
 
+      if (resp.status == 200) {
+        onClose();
+        enqueueSnackbar("เพิ่มวิธีการชำระเงินสำเร็จ!", {
+          variant: "success",
+        });
+      } else {
+        throw Error(resp.statusText);
+      }
+    } catch (error) {
+      enqueueSnackbar("มีบางอย่างผิดพลาดกรุณาลองใหม่อีกครั้งภายหลัง!", {
+        variant: "error",
+      });
+    } finally {
+      setBackdrop(false);
+    }
   };
 
   const handleClose = (_: any, reason: any) => {
@@ -70,101 +97,33 @@ function AddDialog({
         <DialogContent>
           <Grid container sx={{ mt: 2 }} rowGap={1}>
             <Grid lg={6} sm={6} sx={{ px: 0.5 }}>
-              <Autocomplete
-                isOptionEqualToValue={(option, value) => option.value === value.value}
-                options={banks.map((b) => ({
-                  value: b.id,
-                  label: b.thai_name,
-                }))}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="ธนาคาร"
-                    error={errors["bank"]?.message != undefined ? true : false}
-                    helperText={errors["bank"]?.message}
-                  />
-                )}
-                {...register("bank")}
-                onChange={(event, value) => {
-                  setValue("bank", value?.value || ""); // Assuming you have setValue from React Hook Form
-                }}
+              <TextField
+                type="text"
+                label="ธนาคาร"
+                autoFocus
+                error={errors["title"]?.message != undefined ? true : false}
+                helperText={errors["title"]?.message}
+                {...register("title")}
+                fullWidth
               />
             </Grid>
             <Grid lg={6} sm={6} sx={{ px: 0.5 }}>
               <TextField
                 type="text"
-                label="หมายเลขบัญชี"
+                label="เลขบัญชี"
                 error={errors["account"]?.message != undefined ? true : false}
                 helperText={errors["account"]?.message}
                 {...register("account")}
                 fullWidth
               />
             </Grid>
-            <Grid lg={6} sm={6} sx={{ px: 0.5 }}>
+            <Grid lg={12} sm={12} sx={{ px: 0.5 }}>
               <TextField
                 type="text"
-                label="หมายเลขบัตรประชาชนที่ลงทะเบียน"
-                error={errors["idcard"]?.message != undefined ? true : false}
-                helperText={errors["idcard"]?.message}
-                {...register("idcard")}
-                fullWidth
-              />
-            </Grid>
-            <Grid lg={6} sm={6} sx={{ px: 0.5 }}>
-              <TextField
-                type="text"
-                label="เบอร์มือถือที่ลงทะเบียน"
-                error={errors["phone"]?.message != undefined ? true : false}
-                helperText={errors["phone"]?.message}
-                {...register("phone")}
-                fullWidth
-              />
-            </Grid>
-            <Grid lg={6} sm={6} sx={{ px: 0.5 }}>
-              <TextField
-                type="text"
-                label="ชื่อจริง (ไทย)"
-                error={
-                  errors["firstname_thai"]?.message != undefined ? true : false
-                }
-                helperText={errors["firstname_thai"]?.message}
-                {...register("firstname_thai")}
-                fullWidth
-              />
-            </Grid>
-            <Grid lg={6} sm={6} sx={{ px: 0.5 }}>
-              <TextField
-                type="text"
-                label="นามสกุล (ไทย)"
-                error={
-                  errors["lastname_thai"]?.message != undefined ? true : false
-                }
-                helperText={errors["lastname_thai"]?.message}
-                {...register("lastname_thai")}
-                fullWidth
-              />
-            </Grid>
-            <Grid lg={6} sm={6} sx={{ px: 0.5 }}>
-              <TextField
-                type="text"
-                label="ชื่อจริง (ภาษาอังกฤษ)"
-                error={
-                  errors["firstname_eng"]?.message != undefined ? true : false
-                }
-                helperText={errors["firstname_eng"]?.message}
-                {...register("firstname_eng")}
-                fullWidth
-              />
-            </Grid>
-            <Grid lg={6} sm={6} sx={{ px: 0.5 }}>
-              <TextField
-                type="text"
-                label="นามสกุล (ภาษาอังกฤษ)"
-                error={
-                  errors["lastname_eng"]?.message != undefined ? true : false
-                }
-                helperText={errors["lastname_eng"]?.message}
-                {...register("lastname_eng")}
+                label="ชื่อ"
+                error={errors["name"]?.message != undefined ? true : false}
+                helperText={errors["name"]?.message}
+                {...register("name")}
                 fullWidth
               />
             </Grid>
