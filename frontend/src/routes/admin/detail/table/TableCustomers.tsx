@@ -63,7 +63,7 @@ export function TableAdminCustomers({ customers = [], sx, data }: TableAdminCust
             size="small"
             variant="text"
             component={RouterLink}
-            to={`${paths.customers}?search=${data.firstname} ${data.lastname}`}
+            to={`${paths.customers}?search=${data.user.firstname} ${data.user.lastname}`}
           >
             ดูทั้งหมด
           </Button>

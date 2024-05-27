@@ -60,7 +60,7 @@ export function TableAdminInvoice({ invoices = [], sx, data }: TableAdminInvoice
                     <TableCell>{formatter.date2(invoice.end)}</TableCell>
                     <TableCell>{formatter.date2(invoice.createdAt)}</TableCell>
                     <TableCell>
-                      <Link component={RouterLink} to={`${paths.customers}/${data.id}/invoice/${invoice.id}`} >
+                      <Link component={RouterLink} to={`${paths.customers}/${data.user.id}/${invoice.id}`} >
                         <Button variant='text' color="inherit" startIcon={<SearchTwoTone />} > บิล </Button>
                       </Link>
                     </TableCell>
