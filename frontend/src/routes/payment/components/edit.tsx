@@ -14,6 +14,10 @@ import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import { Inputs, Schema } from "../schema";
 import { Payment } from "../../../types/prisma";
 import { banks } from "../../../config";
+import { useQueryClient } from "@tanstack/react-query";
+import { useSnackbar } from "notistack";
+import { useInterface } from "../../../providers/InterfaceProvider";
+import axios from "../../../libs/axios";
 
 export interface EditDialogProps {
   onClose: () => void;
@@ -28,7 +32,10 @@ function EditDialog({
   open,
   payment,
 }: EditDialogProps): React.JSX.Element | null {
-
+  const { setBackdrop } = useInterface();
+  const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
+  
   const {
     register,
     handleSubmit,
@@ -38,32 +45,43 @@ function EditDialog({
   } = useForm<Inputs>({
     resolver: zodResolver(Schema),
     defaultValues: {
-      bank: payment?.bankId,
-      account: payment?.account,
-      idcard: payment?.idcard,
-      phone: payment?.phone,
-      firstname_thai: payment?.firstname_thai,
-      firstname_eng: payment?.firstname_eng,
-      lastname_thai: payment?.firstname_thai,
-      lastname_eng: payment?.lastname_eng
+      title: payment?.title,
+      name: payment?.name,
+      account: payment?.account
     },
   });
 
   React.useEffect(() => {
     if (payment != null) {
-      setValue("bank", payment.bankId);
-      setValue("firstname_thai", payment.firstname_thai);
-      setValue("firstname_eng", payment.firstname_eng);
-      setValue("lastname_thai", payment.lastname_thai);
-      setValue("lastname_eng", payment.lastname_eng);
+      setValue("title", payment.title);
+      setValue("name", payment.name);
       setValue("account", payment.account);
-      setValue("phone", payment.phone);
-      setValue("idcard", payment.idcard);
     }
   }, [payment, setValue]);
 
   const onSubmit = async (payload: Inputs) => {
- 
+    try {
+      setBackdrop(true);
+      const resp = await axios.put(`/payment/${payment?.id}`, {
+        ...payload,
+      });
+
+      if (resp.status == 200) {
+        onClose();
+        await queryClient.refetchQueries({ queryKey: ['payments'], type: 'active' })
+        enqueueSnackbar("แก้ไขวิธีการชำระเงินสำเร็จ!", {
+          variant: "success",
+        });
+      }else{
+        throw Error(resp.statusText)
+      }
+    } catch (error) {
+      enqueueSnackbar("มีบางอย่างผิดพลาดกรุณาลองใหม่อีกครั้งภายหลัง!", {
+        variant: "error",
+      });
+    } finally {
+      setBackdrop(false);
+    }
   };
 
   const handleClose = (_: any, reason: any) => {
@@ -71,11 +89,6 @@ function EditDialog({
       onClose();
     }
   };
-
-  const bankOptions = banks.map((b) => ({
-    value: b.id,
-    label: b.thai_name,
-  }))
 
   if (payment == null) return null;
 
@@ -96,100 +109,33 @@ function EditDialog({
         <DialogContent>
           <Grid container sx={{ mt: 2 }} rowGap={1}>
             <Grid lg={6} sm={6} sx={{ px: 0.5 }}>
-              <Autocomplete
-                isOptionEqualToValue={(option, value) =>
-                  option.value === value.value
-                }
-                options={bankOptions}
-                defaultValue={bankOptions.find(b => b.value == payment.bankId)}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    error={errors["bank"]?.message != undefined ? true : false}
-                    helperText={errors["bank"]?.message}
-                  />
-                )}
-                {...register("bank")}
-                onChange={(event, value) => {
-                  setValue("bank", value?.value || ""); // Assuming you have setValue from React Hook Form
-                }}
+              <TextField
+                type="text"
+                label="ธนาคาร"
+                autoFocus
+                error={errors["title"]?.message != undefined ? true : false}
+                helperText={errors["title"]?.message}
+                {...register("title")}
+                fullWidth
               />
             </Grid>
             <Grid lg={6} sm={6} sx={{ px: 0.5 }}>
               <TextField
                 type="text"
-                label="หมายเลขบัญชี"
+                label="เลขบัญชี"
                 error={errors["account"]?.message != undefined ? true : false}
                 helperText={errors["account"]?.message}
                 {...register("account")}
                 fullWidth
               />
             </Grid>
-            <Grid lg={6} sm={6} sx={{ px: 0.5 }}>
+            <Grid lg={12} sm={12} sx={{ px: 0.5 }}>
               <TextField
                 type="text"
-                label="หมายเลขบัตรประชาชนที่ลงทะเบียน"
-                error={errors["idcard"]?.message != undefined ? true : false}
-                helperText={errors["idcard"]?.message}
-                {...register("idcard")}
-                fullWidth
-              />
-            </Grid>
-            <Grid lg={6} sm={6} sx={{ px: 0.5 }}>
-              <TextField
-                type="text"
-                label="เบอร์มือถือที่ลงทะเบียน"
-                error={errors["phone"]?.message != undefined ? true : false}
-                helperText={errors["phone"]?.message}
-                {...register("phone")}
-                fullWidth
-              />
-            </Grid>
-            <Grid lg={6} sm={6} sx={{ px: 0.5 }}>
-              <TextField
-                type="text"
-                label="ชื่อจริง (ไทย)"
-                error={
-                  errors["firstname_thai"]?.message != undefined ? true : false
-                }
-                helperText={errors["firstname_thai"]?.message}
-                {...register("firstname_thai")}
-                fullWidth
-              />
-            </Grid>
-            <Grid lg={6} sm={6} sx={{ px: 0.5 }}>
-              <TextField
-                type="text"
-                label="นามสกุล (ไทย)"
-                error={
-                  errors["lastname_thai"]?.message != undefined ? true : false
-                }
-                helperText={errors["lastname_thai"]?.message}
-                {...register("lastname_thai")}
-                fullWidth
-              />
-            </Grid>
-            <Grid lg={6} sm={6} sx={{ px: 0.5 }}>
-              <TextField
-                type="text"
-                label="ชื่อจริง (ภาษาอังกฤษ)"
-                error={
-                  errors["firstname_eng"]?.message != undefined ? true : false
-                }
-                helperText={errors["firstname_eng"]?.message}
-                {...register("firstname_eng")}
-                fullWidth
-              />
-            </Grid>
-            <Grid lg={6} sm={6} sx={{ px: 0.5 }}>
-              <TextField
-                type="text"
-                label="นามสกุล (ภาษาอังกฤษ)"
-                error={
-                  errors["lastname_eng"]?.message != undefined ? true : false
-                }
-                helperText={errors["lastname_eng"]?.message}
-                {...register("lastname_eng")}
+                label="ชื่อ"
+                error={errors["name"]?.message != undefined ? true : false}
+                helperText={errors["name"]?.message}
+                {...register("name")}
                 fullWidth
               />
             </Grid>

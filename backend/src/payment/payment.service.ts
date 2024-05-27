@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { CreatePaymentDto, PatchPaymentDto } from './payment.dto';
+import { CreatePaymentDto, PatchPaymentDto, UpdatePaymentDto } from './payment.dto';
 import { TableFetch } from 'src/libs/type';
 import { filter, order, pagination } from 'src/libs/table';
 
@@ -70,6 +70,19 @@ export class PaymentService {
       };
     } catch (error) {
       throw new BadRequestException(error);
+    }
+  }
+
+  async update(id: number, payload: UpdatePaymentDto){
+    try {
+      await this.prisma.payment.update({
+        where: {id},
+        data: {
+          ...payload,
+        }
+      })
+    } catch (error) {
+      throw new BadRequestException(error)
     }
   }
 
