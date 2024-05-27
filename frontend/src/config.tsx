@@ -18,7 +18,7 @@ export const routes = [
     element: <Root />,
     label: "หน้าแรก",
     children: [
-      { index: true, element: <HomePage />, label: "หน้าแรก" },
+      { index: true, element: <HomePage />, loader: HomePage.Loader, label: "หน้าแรก" },
       { path: "/customers", element: <CustomerPage />, label: "ลูกค้า" },
       { path: "/customers/:customerId", element: <CustomerDetailPage/>, loader: CustomerDetailPage.Loader, label: "รายละเอียดลูกค้า"},
       { path: "/customers/:customerId/:invoiceId", element: <InvoiceDetailPage/>, loader: InvoiceDetailPage.Loader, label: "รายละเอียดลูกค้า"},

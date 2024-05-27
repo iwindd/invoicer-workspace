@@ -1,6 +1,8 @@
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import dayjs from "../../libs/dayjs";
 import * as ff from "../../libs/formatter";
+import { useLoaderData } from "react-router-dom";
+import { AxiosResponse } from "axios";
 
 //stats
 import { TotalInvoice } from "./stats/total";
@@ -20,9 +22,11 @@ import { Traffic } from "./charts/traffic";
 //tables
 import { OvertimeInvoice } from "./table/overtime";
 import { CheckingInvoice } from "./table/checking";
+import axios from "../../libs/axios";
 
 function Index() {
-  const invoices: Invoice[] = [];
+  const resp = useLoaderData() as AxiosResponse;
+  const invoices: Invoice[] = resp.data;
 
   const stats = {
     near: invoices.filter(
@@ -186,6 +190,10 @@ function Index() {
       </Grid>
     </Grid>
   );
+}
+
+Index.Loader = async () => {
+  return await axios.get("/dashboard")
 }
 
 export default Index;
