@@ -25,6 +25,10 @@ import { condition } from "../../../../libs/utils";
 import { Invoice } from "../../../../types/prisma";
 import { useConfirm } from "../../../../hooks/use-confirm";
 import { ConfirmationDialog } from "../../../../components/ui/confirmation";
+import { useInterface } from "../../../../providers/InterfaceProvider";
+import { useSnackbar } from "notistack";
+import axios from "../../../../libs/axios";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const url = import.meta.env.VITE_BACKEND_BASE_URL;
 export interface ViewDialogProps {
@@ -36,13 +40,37 @@ export interface ViewDialogProps {
 
 const ViewDialog = ({ onClose, onOpen, open, invoice }: ViewDialogProps) => {
   if (invoice == null) return;
-
+  const { setBackdrop } = useInterface();
+  const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
   const invoiceItems = JSON.parse(invoice.items as string) as Invoice[];
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const confirmation = useConfirm({
     title: "",
     text: "",
-    onConfirm: async (action: boolean) => {},
+    onConfirm: async (action: boolean) => {
+      try {
+        setBackdrop(true);
+        const resp = await axios.patch(`/invoice/${invoice.id}`, {
+          status: action ? 1:0,
+        });
+  
+        if (resp.status == 200) {
+          onClose();
+          enqueueSnackbar("จัดการบิลเรียบร้อยแล้ว", {variant: "success"})
+          await queryClient.refetchQueries({ queryKey: ['invoices'], type: 'active' })
+          await queryClient.refetchQueries({ queryKey: ['invoicesall'], type: 'active' })
+        }else{
+          throw Error(resp.statusText)
+        }
+      } catch (error) {
+        enqueueSnackbar("มีบางอย่างผิดพลาดกรุณาลองใหม่อีกครั้งภายหลัง!", {
+          variant: "error",
+        });
+      } finally {
+        setBackdrop(false);
+      }
+    },
   });
 
   const OnAction = (action: boolean) => {
