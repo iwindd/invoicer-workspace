@@ -1,8 +1,9 @@
-import { BadRequestException, Controller, Get, HttpCode, Param, Post, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Controller, Get, Header, HttpCode, Param, Post, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { NoticeService } from './notice.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { join } from 'path';
+import { Guest } from 'src/auth/auth.decorator';
 
 @Controller('notice')
 export class NoticeController {
@@ -21,6 +22,16 @@ export class NoticeController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.noticeService.fineOne(+id);
+  } 
+
+  @Guest()
+  @HttpCode(200)
+  @Header('Access-Control-Allow-Origin', '*')
+  @Header('Access-Control-Allow-Methods', 'GET')
+  @Header('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version')
+  @Get('check/:id')
+  checkOne(@Param('id') id: string) {
+    return this.noticeService.checkOne(+id);
   } 
 
   @HttpCode(200)

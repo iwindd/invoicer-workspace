@@ -43,6 +43,19 @@ export class NoticeService {
     }
   }
 
+  async checkOne(id : number){
+    try {
+      const { data } = await this.fineOne(id);
+
+      return {
+        invoice: data.filter(i => (i.status == 0) || (i.status == 2 && dayjs().isAfter(dayjs(i.end).endOf('day')))).length > 0,
+        canClose: data.filter((i => (i.status == 0 && dayjs().isBefore(dayjs(i.end).endOf('day'))))).length > 0
+      }
+    } catch (error) {
+      throw new BadRequestException(error)
+    }
+  }
+
   async paid(id:number, imageName: string){
     try {
       await this.prisma.invoice.update({
