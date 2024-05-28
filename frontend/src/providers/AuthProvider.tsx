@@ -1,5 +1,4 @@
 import React, { createContext, useContext, ReactNode, useEffect } from "react";
-import { useCookies } from "react-cookie";
 import axios from "../libs/axios";
 
 export interface UserData {

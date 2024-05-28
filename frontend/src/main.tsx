@@ -10,24 +10,21 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import QueryProvider from "./providers/QueryProvider";
 import { InterfaceProvider } from "./providers/InterfaceProvider";
 import { AuthProvider } from "./providers/AuthProvider";
-import { CookiesProvider } from "react-cookie";
 
 const router = createBrowserRouter(routes)
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <CookiesProvider>
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <ThemeRegistry>
-          <QueryProvider>
-            <InterfaceProvider>
-              <AuthProvider>
-                <RouterProvider router={router} />
-              </AuthProvider>
-            </InterfaceProvider>
-          </QueryProvider>
-        </ThemeRegistry>
-      </LocalizationProvider>
-    </CookiesProvider>
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <ThemeRegistry>
+        <QueryProvider>
+          <InterfaceProvider>
+            <AuthProvider>
+              <RouterProvider router={router} />
+            </AuthProvider>
+          </InterfaceProvider>
+        </QueryProvider>
+      </ThemeRegistry>
+    </LocalizationProvider>
   </React.StrictMode>
 );
