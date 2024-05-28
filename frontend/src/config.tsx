@@ -11,7 +11,7 @@ import InvoiceDetailPage from "./routes/invoice/detail";
 import AdminPage from "./routes/admin";
 import AdminDetailPage from "./routes/admin/detail";
 import PaymentPage from "./routes/payment";
-
+import NoticePage from "./routes/notice";
 
 export const routes = [
   {
@@ -30,6 +30,7 @@ export const routes = [
       { path: "/payment", element: <PaymentPage/>, label: "ช่องทางการชำระเงิน"},
     ]
   },
+  { path: "/notice/:id", element: <NoticePage/>, loader: NoticePage.Loader, label: "แจ้งค้างชำระ"},
   { path: "/signin", element: <SignInPage />, label: "เข้าสู่ระบบ" },
 
 ];
