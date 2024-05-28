@@ -3,13 +3,14 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, List, ListIt
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import { useSnackbar } from 'notistack';
 import React, { ChangeEvent } from 'react'
-import { useParams } from 'react-router-dom';
+import { useParams, useRevalidator } from 'react-router-dom';
 import { useInterface } from '../../../providers/InterfaceProvider';
 import { InvoiceItem } from '../../customer/detail/type';
 import { number } from 'zod';
 import { date2, money } from '../../../libs/formatter';
 import { useDialog } from '../../../hooks/use-dialog';
 import { Invoice, Payment } from '../../../types/prisma';
+import axios from '../../../libs/axios';
 
 interface PaymentDialogProps {
   onClose: () => void;
@@ -36,11 +37,35 @@ const PaymentDialog = ({ onClose, open, invoices, payment }: PaymentDialogProps)
   const { id } = useParams();
   const { setBackdrop } = useInterface();
   const { enqueueSnackbar } = useSnackbar();
+  const revalidator = useRevalidator();
   
   const onSubmit = async (e: HTMLFormElement) => {
     e.preventDefault()
     if (!image) return;
 
+    try {
+      setBackdrop(true);
+      const formData = new FormData();
+      formData.append('file', image);
+  
+      const resp = await axios.post(`/notice/${selectInvoice}`, formData);
+
+      if (resp.status == 200) {
+        onClose();
+        revalidator.revalidate();
+        enqueueSnackbar("แจ้งชำระเงินสำเร็จ!", {
+          variant: "success",
+        });
+      }else{
+        throw Error(resp.statusText)
+      }
+    } catch (error) {
+      enqueueSnackbar("มีบางอย่างผิดพลาดกรุณาลองใหม่อีกครั้งภายหลัง!", {
+        variant: "error",
+      });
+    } finally {
+      setBackdrop(false);
+    }
   }
 
   const onUploadFile = (e: ChangeEvent<HTMLInputElement>) => {
@@ -82,8 +107,6 @@ const PaymentDialog = ({ onClose, open, invoices, payment }: PaymentDialogProps)
 
                 const items = JSON.parse(invoice.items as string) as InvoiceItem[];
                 const total = items.reduce((v, i) => v + (i.amount * i.price), 0)
-                console.log(invoice.id);
-                
 
                 return (
                   <ListItem

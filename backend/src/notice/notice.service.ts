@@ -42,4 +42,18 @@ export class NoticeService {
       throw new BadRequestException(error)
     }
   }
+
+  async paid(id:number, imageName: string){
+    try {
+      await this.prisma.invoice.update({
+        where: {id},
+        data: {
+          image: imageName,
+          status: 2
+        }
+      })
+    } catch (error) {
+      throw new BadRequestException(error)
+    }
+  }
 }
