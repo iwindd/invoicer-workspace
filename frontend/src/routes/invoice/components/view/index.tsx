@@ -26,6 +26,7 @@ import { Invoice } from "../../../../types/prisma";
 import { useConfirm } from "../../../../hooks/use-confirm";
 import { ConfirmationDialog } from "../../../../components/ui/confirmation";
 
+export const url = import.meta.env.VITE_BACKEND_BASE_URL;
 export interface ViewDialogProps {
   onClose: () => void;
   onOpen: () => void;
@@ -229,7 +230,7 @@ const ViewDialog = ({ onClose, onOpen, open, invoice }: ViewDialogProps) => {
                     style={{ width: "auto", height: 610, overflow: "scroll" }}
                   >
                     <img
-                      src={`/api/image/${invoice.image}`}
+                      src={`${url}/notice/images/${invoice.image}`}
                       alt="Receipt"
                       width={500}
                       height={500}

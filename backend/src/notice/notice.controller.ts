@@ -10,6 +10,7 @@ import { v4 } from 'uuid';
 export class NoticeController {
   constructor(private readonly noticeService: NoticeService) {};
 
+  @Guest()
   @HttpCode(200)
   @Get('images/:name')
   getFile(@Param("name") name: string, @Res() res : any){
