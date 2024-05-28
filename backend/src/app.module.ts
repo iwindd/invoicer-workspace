@@ -5,9 +5,10 @@ import { CustomersModule } from './customers/customers.module';
 import { InvoiceModule } from './invoice/invoice.module';
 import { PaymentModule } from './payment/payment.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { NoticeModule } from './notice/notice.module';
 
 @Module({
-  imports: [AuthModule, UsersModule, CustomersModule, InvoiceModule, PaymentModule, DashboardModule],
+  imports: [AuthModule, UsersModule, CustomersModule, InvoiceModule, PaymentModule, DashboardModule, NoticeModule],
   controllers: [],
   providers: [],
 })
