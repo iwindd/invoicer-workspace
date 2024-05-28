@@ -2,8 +2,9 @@ import { BadRequestException, Controller, Get, Header, HttpCode, Param, Post, Re
 import { NoticeService } from './notice.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { join } from 'path';
+import { extname, join } from 'path';
 import { Guest } from 'src/auth/auth.decorator';
+import { v4 } from 'uuid';
 
 @Controller('notice')
 export class NoticeController {
@@ -40,7 +41,7 @@ export class NoticeController {
     storage: diskStorage({
       destination: "./uploads",
       filename(req, file, callback) {
-        callback(null, `${file.originalname}`)
+        callback(null, v4() + extname(file.originalname))
       },
     })
   }))
