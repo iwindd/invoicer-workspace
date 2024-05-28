@@ -47,9 +47,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const Logout = async () => {
     try {
-      setUserData(null);
+      const resp = await axios.post("/auth/logout");
+      
+      if (resp.status == 200){
+        setUserData(null);
+        return true;
+      }else{
+        throw new Error(resp.statusText)
+      }
 
-      return true;
     } catch (error) {
       return false;
     }

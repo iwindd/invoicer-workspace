@@ -48,4 +48,10 @@ export class AuthController {
   getProfile(@Request() req) {
     return req.user;
   }
+
+  @Post('logout')
+  async logout(@Res() response: any) {
+    response.clearCookie('jwt');
+    response.status(200).send({ message: 'success' })
+  }
 }
