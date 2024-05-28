@@ -29,7 +29,6 @@ export function useAuth() {
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [userData, setUserData] = React.useState<UserData | null>(null);
-  const [cookie] = useCookies(["jwt"]);
   const [isFetching, setIsFetching] = React.useState<boolean>(true);
 
   const SignIn = async (email: string, password: string) => {
@@ -62,21 +61,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    if (cookie.jwt) {
-      setIsFetching(true);
+    setIsFetching(true);
       
-      axios
-        .get("/auth/user")
-        .then((resp) => {
-          setUserData(resp.data as UserData);
-        })
-        .catch(() => {
-          setUserData(null);
-        })
-        .finally(() => {
-          setIsFetching(false);
-        });
-    }
+    axios
+      .get("/auth/user")
+      .then((resp) => {
+        setUserData(resp.data as UserData);
+      })
+      .catch(() => {
+        setUserData(null);
+      })
+      .finally(() => {
+        setIsFetching(false);
+      });
   }, []);
 
   return (
