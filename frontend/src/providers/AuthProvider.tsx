@@ -29,15 +29,13 @@ export function useAuth() {
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [userData, setUserData] = React.useState<UserData | null>(null);
-  const [cookie, setCookie, removeCookie] = useCookies(["accessToken"]);
+  const [cookie] = useCookies(["jwt"]);
   const [isFetching, setIsFetching] = React.useState<boolean>(true);
 
   const SignIn = async (email: string, password: string) => {
     try {
       const resp = await axios.post("/auth/login", { email, password });
-      if ((resp.status = 200)) {
-        setCookie("accessToken", resp.data.access_token);
-      } else {
+      if (resp.status != 200) {
         throw Error(resp.statusText);
       }
     } catch (error) {
@@ -49,7 +47,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const Logout = async () => {
     try {
-      removeCookie("accessToken");
       setUserData(null);
 
       return true;
@@ -59,7 +56,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    if (cookie.accessToken) {
+    if (cookie.jwt) {
       setIsFetching(true);
       
       axios
