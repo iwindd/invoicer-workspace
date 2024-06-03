@@ -70,16 +70,20 @@ export function UserPopover({
         disablePadding
         sx={{ p: "8px", "& .MuiMenuItem-root": { borderRadius: 1 } }}
       >
-        <MenuItem
-          component={Link}
-          to={`${paths.admin}/${userData?.id}`}
-          onClick={onClose}
-        >
-          <ListItemIcon>
-            <PeopleTwoTone />
-          </ListItemIcon>
-          บัญชี
-        </MenuItem>
+        {
+          userData?.permission == 1 ? (
+            <MenuItem
+              component={Link}
+              to={`${paths.admin}/${userData?.id}`}
+              onClick={onClose}
+            >
+              <ListItemIcon>
+                <PeopleTwoTone />
+              </ListItemIcon>
+              บัญชี
+            </MenuItem>
+          ): null
+        }
         <MenuItem onClick={onLogout}>
           <ListItemIcon>
             <LogoutTwoTone />
