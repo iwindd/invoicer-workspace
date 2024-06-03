@@ -2,8 +2,10 @@ import { BadRequestException, Body, Controller, Delete, Get, HttpCode, Param, Pa
 import { UsersService } from './users.service';
 import { CreateUserDto, PatchUserDto, UpdateUserDto } from './users.dto';
 import { TableFetch } from 'src/libs/type';
+import { Admin } from 'src/auth/auth.decorator';
 
 @Controller('users')
+@Admin()
 export class UsersController {
   constructor(private readonly usersService: UsersService) {};
 
