@@ -9,7 +9,7 @@ import Typography from "@mui/material/Typography";
 
 import { LogoutTwoTone, PeopleTwoTone } from "@mui/icons-material";
 import { useSnackbar } from "notistack";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../providers/AuthProvider";
 import { useInterface } from "../providers/InterfaceProvider";
 import { paths } from "../config";
@@ -33,9 +33,8 @@ export function UserPopover({
     setBackdrop(true);
     onClose();
     try {
-      await Logout();
-      
       if (await Logout()){
+        window.location.reload();
         enqueueSnackbar("ออกจากระบบสำเร็จ!", { variant: "success" });
       }else{
         throw Error("cannot_logout");
