@@ -1,5 +1,7 @@
 import React, { createContext, useContext, ReactNode, useEffect } from "react";
 import axios from "../libs/axios";
+import { useQuery } from "@tanstack/react-query";
+import { useInterface } from "./InterfaceProvider";
 
 export interface UserData {
   id: number;
@@ -27,8 +29,12 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [userData, setUserData] = React.useState<UserData | null>(null);
-  const [isFetching, setIsFetching] = React.useState<boolean>(true);
+  const {data: userData, refetch: getUserData, isLoading: isFetching} = useQuery({
+    queryKey: ["userData"],
+    queryFn: async () => {
+      return (await axios.get("/auth/user")).data;
+    }
+  })
 
   const SignIn = async (email: string, password: string) => {
     try {
@@ -37,7 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw Error(resp.statusText);
       }
 
-      setUserData(resp.data);
+      await getUserData()
     } catch (error) {
       return false;
     }
@@ -50,7 +56,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const resp = await axios.post("/auth/logout");
       
       if (resp.status == 200){
-        setUserData(null);
+        await getUserData()
         return true;
       }else{
         throw new Error(resp.statusText)
@@ -60,22 +66,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return false;
     }
   };
-
-  useEffect(() => {
-    setIsFetching(true);
-      
-    axios
-      .get("/auth/user")
-      .then((resp) => {
-        setUserData(resp.data as UserData);
-      })
-      .catch(() => {
-        setUserData(null);
-      })
-      .finally(() => {
-        setIsFetching(false);
-      });
-  }, []);
 
   return (
     <AuthContext.Provider
