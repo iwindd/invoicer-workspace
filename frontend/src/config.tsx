@@ -1,5 +1,6 @@
 import Root from "./routes/root";
 import { NavItemConfig } from "./types/nav";
+import ErrorPage from "./error-page";
 
 // routes
 import HomePage from "./routes/home";
@@ -18,6 +19,7 @@ export const routes = [
     path: "/",
     element: <Root />,
     label: "หน้าแรก",
+    errorElement: <ErrorPage />,
     children: [
       { path: "/", index: true, element: <HomePage />, loader: HomePage.Loader, label: "หน้าแรก" },
       { path: "/customers", element: <CustomerPage />, label: "ลูกค้า" },
