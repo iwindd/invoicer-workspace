@@ -15,12 +15,14 @@ import { Inputs, Schema } from "./schema";
 import { useAuth } from "../../providers/AuthProvider";
 import { useInterface } from "../../providers/InterfaceProvider";
 import { useSnackbar } from "notistack";
-import { Navigate, redirect } from "react-router-dom";
+import { Navigate, redirect, useNavigate } from "react-router-dom";
+import { paths } from "../../config";
 
 const Index = () => {
   const { SignIn, userData } = useAuth();
   const { setBackdrop } = useInterface();
   const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
 
   const {
     register,
@@ -37,6 +39,7 @@ const Index = () => {
 
       if (resp) {
         enqueueSnackbar("เข้าสู่ระบบสำเร็จ!", { variant: "success" });
+        navigate(paths.home);
       } else {
         enqueueSnackbar("ไม่พบผู้ใช้", { variant: "error" });
       }
