@@ -29,16 +29,17 @@ export class AuthController {
         signInDto.password,
       );
 
-      const jwt = await this.jwtService.signAsync({
+      const session = {
         id: user.id,
         email: user.email,
         firstname: user.firstname,
         lastname: user.lastname,
         permission: user.permission,
-      });
+      } 
+      const jwt = await this.jwtService.signAsync(session);
 
       res.cookie('jwt', jwt, {httpOnly: true});
-      res.status(200).send({ message: 'success' })
+      res.status(200).send(session)
     } catch (error) {
       throw new BadRequestException(error);
     }

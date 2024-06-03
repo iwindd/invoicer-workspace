@@ -36,6 +36,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (resp.status != 200) {
         throw Error(resp.statusText);
       }
+
+      setUserData(resp.data);
     } catch (error) {
       return false;
     }
