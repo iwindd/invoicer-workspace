@@ -11,7 +11,7 @@ import QueryProvider from "./providers/QueryProvider";
 import { InterfaceProvider } from "./providers/InterfaceProvider";
 import { AuthProvider } from "./providers/AuthProvider";
 
-const router = createBrowserRouter(routes)
+const router = createBrowserRouter(routes as any)
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
