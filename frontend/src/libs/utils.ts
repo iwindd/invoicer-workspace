@@ -32,10 +32,8 @@ export const isNavItemActive = ({
 };
 
 export function getSiteURL(): string {
-  let url = window.location.hostname;
-  // Make sure to include `https://` when not localhost.
-  url = url.includes("http") ? url : `https://${url}`;
-  // Make sure to include a trailing `/`.
+  let url = window.location.origin;
+  
   url = url.endsWith("/") ? url : `${url}/`;
   return url;
 }

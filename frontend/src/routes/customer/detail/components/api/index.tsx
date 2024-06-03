@@ -11,7 +11,7 @@ export interface ApiDialogProps {
 }
 
 const ApiDialog = ({ onClose, open }: ApiDialogProps) => {
-  const { id } = useParams();
+  const { customerId: id } = useParams();
 
   return (
     <Dialog
@@ -34,7 +34,7 @@ const ApiDialog = ({ onClose, open }: ApiDialogProps) => {
           <Stack>
             <Typography variant='h6'>API :</Typography>
             <Highlight>
-              {getSiteURL()}api/notice/{id}
+              {import.meta.env.VITE_BACKEND_BASE_URL}/notice/{id}
             </Highlight>
           </Stack>
         </Stack>
