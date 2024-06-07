@@ -1,5 +1,4 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
 import { CreateUserDto, PatchUserDto, UpdateUserDto } from './users.dto';
 import { hash } from 'bcrypt';
@@ -24,7 +23,7 @@ export class UsersService {
     }
   }
 
-  async findOneByEmail(email: string): Promise<User | undefined> {
+  async findOneByEmail(email: string): Promise<any> {
     return (this.prisma.user.findFirst({
       where: {
         email: email,
@@ -36,7 +35,7 @@ export class UsersService {
         lastname: true,
         permission: true,
       },
-    }) as unknown) as User | undefined;
+    }) as unknown) as any;
   }
 
     
